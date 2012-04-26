@@ -59,7 +59,7 @@ public class PersistentProperties extends ClasspathContainer implements IPersist
 	}
 
 	public PersistentProperties() {
-		setSynchronized(false);
+		setEnabled(false);
 	}
 
 	private IPath getLibrariesXml() {
@@ -67,7 +67,7 @@ public class PersistentProperties extends ClasspathContainer implements IPersist
 	}
 
 	@Override
-	public synchronized boolean isSynchronized() {
+	public synchronized boolean isEnabled() {
 		return this.pyjdtSynchronized;
 	}
 
@@ -83,7 +83,7 @@ public class PersistentProperties extends ClasspathContainer implements IPersist
 	}
 
 	@Override
-	public synchronized void setSynchronized(boolean sync) {
+	public synchronized void setEnabled(boolean sync) {
 		this.pyjdtSynchronized = sync;
 
 	}

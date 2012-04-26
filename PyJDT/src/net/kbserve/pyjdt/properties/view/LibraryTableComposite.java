@@ -50,15 +50,13 @@ public class LibraryTableComposite extends Composite {
 		table.clearAll();
 		table.setItemCount(0);
 		for (IClasspathInfo cp : persistentProperties.getChildren()) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(0, cp.getPath());
-			item.setChecked(cp.isEnabled());
+			new ClasspathInfoTableItem(table, SWT.NONE, cp);
 		}
 		
 		for (TableColumn column : table.getColumns()) {
 			column.pack();
 		}
-		table.setEnabled(persistentProperties.isSynchronized());
+		table.setEnabled(persistentProperties.isEnabled());
 		libraryColumn.pack();
 		table.pack(changed);
 		super.pack(changed);

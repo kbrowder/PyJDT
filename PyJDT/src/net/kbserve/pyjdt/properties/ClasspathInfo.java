@@ -3,7 +3,6 @@ package net.kbserve.pyjdt.properties;
 import org.eclipse.jdt.core.IClasspathEntry;
 
 public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo {
-	// TODO: support containers
 	private String path;
 	private boolean enabled = true;
 	private int entryKind = 0;

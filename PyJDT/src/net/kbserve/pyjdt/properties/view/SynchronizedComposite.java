@@ -35,7 +35,7 @@ public class SynchronizedComposite extends Composite {
 	public void pack(boolean changed) {
 		IPersistentProperties persistentProperties = PersistentProperties
 				.load(project);
-		this.setSelection(persistentProperties.isSynchronized());
+		this.setSelection(persistentProperties.isEnabled());
 		syncCheckbox.pack(changed);
 		super.pack(changed);
 	}

@@ -30,7 +30,7 @@ public class PropertyComposite extends Composite {
 			public void widgetSelected(SelectionEvent arg0) {
 				IPersistentProperties persistentProperties = PersistentProperties
 						.load(project);
-				persistentProperties.setSynchronized((syncCheckbox)
+				persistentProperties.setEnabled((syncCheckbox)
 						.getSelection());
 
 				pack(true);
@@ -44,7 +44,7 @@ public class PropertyComposite extends Composite {
 		libsTbl = new LibraryTableComposite(this, SWT.NONE, project);
 
 		syncCheckbox.setSelection(PersistentProperties.load(project)
-				.isSynchronized());
+				.isEnabled());
 	}
 
 	public boolean getSelection() {

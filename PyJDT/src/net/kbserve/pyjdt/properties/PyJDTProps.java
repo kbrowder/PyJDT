@@ -49,7 +49,7 @@ public class PyJDTProps extends PropertyPage {
 		// store the value in the owner text field
 
 		IPersistentProperties pp = PersistentProperties.load(getElement());
-		pp.setSynchronized(propertyComposite.getSelection());
+		pp.setEnabled(propertyComposite.getSelection());
 		for (TableItem i : propertyComposite.getItems()) {
 			String key = i.getText(0);
 			Boolean value = i.getChecked();
