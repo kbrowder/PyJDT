@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            name="PyDev JDT"
+            nameFilter="*"
+            class="net.kbserve.pyjdt.properties.PyJDTProps"
+            id="net.kbserve.pyjdt.properties.samplePropertyPage"
+            >
+         <enabledWhen>
+         
+         	<filter name="projectNature"
+               value="org.python.pydev.pythonNature"/>
+            <filter name="projectNature"
+               value="eclipse.jdt.core.javanature"/>
+            <adapt
+                  type="org.eclipse.core.resources.IProject">
+            </adapt>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup class="net.kbserve.pyjdt.startup.Startup" />
+   </extension>
+
+</plugin>

@@ -1,0 +1,72 @@
+package net.kbserve.pyjdt.properties;
+
+import java.io.FileNotFoundException;
+
+import net.kbserve.pyjdt.properties.view.PropertyComposite;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.dialogs.PropertyPage;
+
+public class PyJDTProps extends PropertyPage {
+	
+	PropertyComposite propertyComposite;
+
+	/**
+	 * Constructor for SamplePropertyPage.
+	 */
+	public PyJDTProps() {
+		super();
+	}
+	
+	/**
+	 * @see PreferencePage#createContents(Composite)
+	 */
+	protected Control createContents(Composite parent) {
+		propertyComposite = new PropertyComposite(parent, SWT.NONE, getElement());
+		propertyComposite.pack();
+		return propertyComposite;
+	}
+
+	protected void performDefaults() {
+		super.performDefaults();
+		PersistentProperties.reload(getElement());
+		propertyComposite.pack();
+	}
+
+	@Override
+	public IProject getElement() {
+		return (IProject) super.getElement().getAdapter(IProject.class);
+	}
+
+	@Override
+	public boolean performOk() {
+		// store the value in the owner text field
+
+		IPersistentProperties pp = PersistentProperties.load(getElement());
+		pp.setSynchronized(propertyComposite.getSelection());
+		for (TableItem i : propertyComposite.getItems()) {
+			String key = i.getText(0);
+			Boolean value = i.getChecked();
+			pp.getClasspath(key).setEnabled(value);
+		}
+
+		try {
+			pp.save();
+			return true;
+		} catch (CoreException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+
+	}
+
+}
