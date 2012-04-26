@@ -49,7 +49,7 @@ public class LibraryTableComposite extends Composite {
 		JDTChangeListener.updateClasspaths(project);
 		table.clearAll();
 		table.setItemCount(0);
-		for (IClasspathInfo cp : persistentProperties.getClasspathInfo()) {
+		for (IClasspathInfo cp : persistentProperties.getChildren()) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, cp.getPath());
 			item.setChecked(cp.isEnabled());

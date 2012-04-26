@@ -53,7 +53,7 @@ public class PyJDTProps extends PropertyPage {
 		for (TableItem i : propertyComposite.getItems()) {
 			String key = i.getText(0);
 			Boolean value = i.getChecked();
-			pp.getClasspath(key).setEnabled(value);
+			pp.getChildren(key).setEnabled(value);
 		}
 
 		try {

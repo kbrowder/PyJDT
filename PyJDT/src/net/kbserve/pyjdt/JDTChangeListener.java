@@ -49,7 +49,7 @@ public class JDTChangeListener implements IElementChangedListener {
 					System.out.println("resolved cp:\t"
 							+ cp.getPath().toPortableString() + " = "
 							+ cp.getEntryKind());
-					PersistentProperties.load(jp.getProject()).getClasspath(
+					PersistentProperties.load(jp.getProject()).getChildren(
 							cp.getPath().toFile().getAbsolutePath());
 
 				}
@@ -77,7 +77,7 @@ public class JDTChangeListener implements IElementChangedListener {
 							+ cp.getEntryKind());
 					System.out
 							.println("\t\t" + cp.getPath().toPortableString());
-					PersistentProperties.load(jp.getProject()).getOrCreateClasspath(cp);
+					PersistentProperties.load(jp.getProject()).getOrCreateChildren(cp);
 
 				}
 

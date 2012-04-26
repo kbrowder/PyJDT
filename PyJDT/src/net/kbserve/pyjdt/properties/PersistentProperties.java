@@ -8,9 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import net.kbserve.pyjdt.Activator;
@@ -18,21 +16,18 @@ import net.kbserve.pyjdt.Activator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
 
-public class PersistentProperties implements IPersistentProperties {
+public class PersistentProperties extends ClasspathContainer implements IPersistentProperties {
 	
-	protected static Map<IProject, PersistentProperties> props;
-	static {
-		props = new HashMap<IProject, PersistentProperties>();
-	}
+	final protected static Map<IProject, PersistentProperties> props = new HashMap<IProject, PersistentProperties>();
+
 	protected static IPath getLibrariesXml(IProject project) {
 		return getWorkingLocation(project).append("libraries.xml");
 	};
 	protected static IPath getWorkingLocation(IProject project) {
 		return project.getWorkingLocation(Activator.PLUGIN_ID);
 	}
-	private final Map<String, IClasspathInfo> classpaths = new HashMap<String, IClasspathInfo>();//TODO: order..
+	
 
 	private boolean pyjdtSynchronized;
 
@@ -58,45 +53,13 @@ public class PersistentProperties implements IPersistentProperties {
 		}
 		return pp;
 	}
-	public static synchronized IPersistentProperties reload(IProject project) {
+	public static synchronized IClasspathContainer reload(IProject project) {
 		props.remove(project);
 		return load(project);
 	}
 
 	public PersistentProperties() {
 		setSynchronized(false);
-	}
-
-	@Override
-	public void addClasspathInfo(IClasspathInfo classpath) {
-		classpaths.put(classpath.getPath(), classpath);
-
-	}
-
-	@Override
-	public synchronized void clearClasspaths() {
-		classpaths.clear();
-
-	}
-
-	
-	@Override
-	public synchronized IClasspathInfo getOrCreateClasspath(IClasspathEntry path) {
-		String strPath = path.getPath().toPortableString();
-		if (!classpaths.containsKey(strPath)) {
-			ClasspathInfo value = new ClasspathInfo();
-			value.setPath(strPath);
-			classpaths.put(strPath, value);
-		}
-		return classpaths.get(strPath);
-	}
-	public synchronized IClasspathInfo getClasspath(String path) {
-		return classpaths.get(path);
-	}
-
-	@Override
-	public synchronized Collection<IClasspathInfo> getClasspathInfo() {
-		return new LinkedList<IClasspathInfo>(classpaths.values());
 	}
 
 	private IPath getLibrariesXml() {
@@ -117,23 +80,6 @@ public class PersistentProperties implements IPersistentProperties {
 				new FileOutputStream(loc.toFile())));
 		e.writeObject(this);
 		e.close();
-	}
-
-	@Override
-	public void setClasspathInfo(Collection<IClasspathInfo> classpath) {
-		setClasspathInfo(classpath, true);
-	}
-
-	@Override
-	public synchronized void setClasspathInfo(
-			Collection<IClasspathInfo> classpath, boolean clear) {
-		if (clear) {
-			clearClasspaths();
-		}
-		for (IClasspathInfo cp : classpath) {
-			this.classpaths.put(cp.getPath(), cp);
-		}
-
 	}
 
 	@Override
