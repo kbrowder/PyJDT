@@ -5,7 +5,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.JavaCore;
 
 public class ClasspathContainer implements IClasspathContainer {
 	final Map<IClasspathInfo, IClasspathInfo> classpaths = new TreeMap<IClasspathInfo, IClasspathInfo>();
@@ -18,12 +20,14 @@ public class ClasspathContainer implements IClasspathContainer {
 	}
 
 	public synchronized IClasspathInfo getOrCreateChildren(IClasspathEntry path) {
+		//this probably should be tied in more with the listener
 		ClasspathInfo fakeCPE = new ClasspathInfo(path);
 		if (!classpaths.containsKey(fakeCPE)) {
 			ClasspathInfo value = new ClasspathInfo(path);
 			classpaths.put(value, value);
 		}
-		return classpaths.get(fakeCPE);
+		IClasspathInfo returnValue = classpaths.get(fakeCPE);
+		return returnValue;
 	}
 
 	public synchronized IClasspathInfo getChildren(String path) {

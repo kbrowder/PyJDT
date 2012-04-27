@@ -3,6 +3,8 @@ package net.kbserve.pyjdt.properties.models;
 import org.eclipse.jdt.core.IClasspathEntry;
 
 public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo {
+	//TODO: probably should use JavaCore.getResolvedClasspathEntry to get additional information after the bean has been loaded
+	//TODO: Should we really be doing this? we could just bean-ify IClasspathEntry
 	private String path;
 	private boolean enabled = true;
 	private int entryKind = 0;
@@ -13,6 +15,7 @@ public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo 
 	public ClasspathInfo(IClasspathEntry classpathEntry) {
 		setPath(classpathEntry.getPath().toPortableString());
 		setEntryKind(classpathEntry.getEntryKind());
+		
 	}
 
 	@Override

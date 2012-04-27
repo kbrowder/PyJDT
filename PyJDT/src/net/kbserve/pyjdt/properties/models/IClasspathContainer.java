@@ -2,6 +2,7 @@ package net.kbserve.pyjdt.properties.models;
 
 import java.util.Collection;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
 
 public interface IClasspathContainer {

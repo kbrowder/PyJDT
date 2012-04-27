@@ -1,5 +1,6 @@
 package net.kbserve.pyjdt;
 
+import net.kbserve.pyjdt.properties.models.IClasspathInfo;
 import net.kbserve.pyjdt.properties.models.PersistentProperties;
 
 import org.eclipse.core.resources.IProject;
@@ -32,7 +33,7 @@ public class JDTChangeListener implements IElementChangedListener {
 		case IJavaElementDelta.CHANGED:
 			break;
 		case IJavaElementDelta.REMOVED:
-			break;//TODO: do something here
+			break;// TODO: do something here
 		}
 
 	}
@@ -77,7 +78,14 @@ public class JDTChangeListener implements IElementChangedListener {
 							+ cp.getEntryKind());
 					System.out
 							.println("\t\t" + cp.getPath().toPortableString());
-					PersistentProperties.load(jp.getProject()).getOrCreateChildren(cp);
+					IClasspathInfo cpe = PersistentProperties.load(
+							jp.getProject()).getOrCreateChildren(cp);
+					for (IClasspathEntry i : JavaCore
+							.getReferencedClasspathEntries(cp,
+									JavaCore.create(project))) { //TODO: is this correct?
+						System.out.println("Child:"+i);
+						cpe.getOrCreateChildren(i);
+					}
 
 				}
 
