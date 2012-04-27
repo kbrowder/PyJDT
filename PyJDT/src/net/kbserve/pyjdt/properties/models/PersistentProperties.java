@@ -1,4 +1,4 @@
-package net.kbserve.pyjdt.properties;
+package net.kbserve.pyjdt.properties.models;
 
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;

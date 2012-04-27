@@ -2,6 +2,8 @@ package net.kbserve.pyjdt.properties;
 
 import java.io.FileNotFoundException;
 
+import net.kbserve.pyjdt.properties.models.IPersistentProperties;
+import net.kbserve.pyjdt.properties.models.PersistentProperties;
 import net.kbserve.pyjdt.properties.view.PropertyComposite;
 
 import org.eclipse.core.resources.IProject;

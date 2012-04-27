@@ -1,7 +1,7 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.properties.IPersistentProperties;
-import net.kbserve.pyjdt.properties.PersistentProperties;
+import net.kbserve.pyjdt.properties.models.IPersistentProperties;
+import net.kbserve.pyjdt.properties.models.PersistentProperties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;

@@ -1,4 +1,4 @@
-package net.kbserve.pyjdt.properties;
+package net.kbserve.pyjdt.properties.models;
 
 import org.eclipse.jdt.core.IClasspathEntry;
 

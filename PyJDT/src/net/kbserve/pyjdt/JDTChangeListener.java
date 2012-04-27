@@ -1,6 +1,6 @@
 package net.kbserve.pyjdt;
 
-import net.kbserve.pyjdt.properties.PersistentProperties;
+import net.kbserve.pyjdt.properties.models.PersistentProperties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
