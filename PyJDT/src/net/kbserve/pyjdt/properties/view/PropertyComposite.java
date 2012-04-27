@@ -10,7 +10,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class PropertyComposite extends Composite {
 	private SynchronizedComposite syncCheckbox;
@@ -51,7 +51,7 @@ public class PropertyComposite extends Composite {
 		return syncCheckbox.getSelection();
 	}
 
-	public TableItem[] getItems() {
+	public TreeItem[] getItems() {
 		return libsTbl.getItems();
 	}
 

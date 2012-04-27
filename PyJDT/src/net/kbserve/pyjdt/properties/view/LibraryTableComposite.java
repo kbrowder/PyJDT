@@ -10,35 +10,29 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class LibraryTableComposite extends Composite {
 
 	private IProject project;
-	private Table table;
-	private TableColumn libraryColumn;
-	
+	private Tree table;
+
 	public LibraryTableComposite(Composite parent, int style, IProject project) {
 		super(parent, style);
 		GridLayout layout = new GridLayout(1, true);
 		setLayout(layout);
 
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		table = new Table(this, SWT.BORDER | SWT.CHECK);
-		table.setLinesVisible(true);
-		table.setHeaderVisible(true);
+
+		table = new Tree(this, SWT.BORDER | SWT.CHECK);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		
-		libraryColumn = new TableColumn(table, SWT.CENTER, 0);
-		libraryColumn.setText("Library");
-		
 		this.project = project;
 	}
-	
-	public TableItem[] getItems() {
+
+	public TreeItem[] getItems() {
 		return table.getItems();
 	}
 
@@ -47,17 +41,42 @@ public class LibraryTableComposite extends Composite {
 		IPersistentProperties persistentProperties = PersistentProperties
 				.load(project);
 		JDTChangeListener.updateClasspaths(project);
-		table.clearAll();
 		table.setItemCount(0);
+		table.clearAll(true);
+
+		table.addListener(SWT.Expand, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+				System.out.println("SetData: " + arg0);
+
+			}
+		});
+
+		table.addListener(SWT.Selection, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+				if(arg0.detail == SWT.CHECK) {
+					System.out.println("Selection: " + arg0.item);
+					try {
+						TreeItem tree = (TreeItem)arg0.item;
+						IClasspathInfo cpi = (IClasspathInfo)tree.getData();
+						cpi.setEnabled(tree.getChecked());
+					} catch (ClassCastException e)  {}
+				}
+
+			}
+		});
+
 		for (IClasspathInfo cp : persistentProperties.getChildren()) {
-			new ClasspathInfoTableItem(table, SWT.NONE, cp);
+			TreeItem ti = new TreeItem(table, SWT.NONE);
+			ti.setText(cp.getPath());
+			ti.setChecked(cp.isEnabled());
+			ti.setData(cp);
 		}
-		
-		for (TableColumn column : table.getColumns()) {
-			column.pack();
-		}
+
 		table.setEnabled(persistentProperties.isEnabled());
-		libraryColumn.pack();
 		table.pack(changed);
 		super.pack(changed);
 	}

@@ -10,11 +10,11 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 public class PyJDTProps extends PropertyPage {
-	
+
 	PropertyComposite propertyComposite;
 
 	/**
@@ -23,12 +23,13 @@ public class PyJDTProps extends PropertyPage {
 	public PyJDTProps() {
 		super();
 	}
-	
+
 	/**
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
-		propertyComposite = new PropertyComposite(parent, SWT.NONE, getElement());
+		propertyComposite = new PropertyComposite(parent, SWT.NONE,
+				getElement());
 		propertyComposite.pack();
 		return propertyComposite;
 	}
@@ -47,14 +48,8 @@ public class PyJDTProps extends PropertyPage {
 	@Override
 	public boolean performOk() {
 		// store the value in the owner text field
-
+		
 		IPersistentProperties pp = PersistentProperties.load(getElement());
-		pp.setEnabled(propertyComposite.getSelection());
-		for (TableItem i : propertyComposite.getItems()) {
-			String key = i.getText(0);
-			Boolean value = i.getChecked();
-			pp.getChildren(key).setEnabled(value);
-		}
 
 		try {
 			pp.save();
