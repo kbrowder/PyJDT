@@ -66,10 +66,10 @@ public class PyDevPaths {
 				value = workspaceLocation.append(value).makeAbsolute();
 				if (projectLocation.isPrefixOf(value)) {
 					value = value.makeRelativeTo(projectLocation);
-					value = new Path("${project_location}").append(value);
+					value = new Path(variableToExpand("project_loc")).append(value);
 				} else if (workspaceLocation.isPrefixOf(value)) {
 					value = value.makeRelativeTo(workspaceLocation);
-					value = new Path("${workspace_location}").append(value);
+					value = new Path(variableToExpand("workspace_loc")).append(value);
 				} else {
 					// nothing
 				}
@@ -86,8 +86,7 @@ public class PyDevPaths {
 
 				List<String> pathList = pythonPathNature
 						.getProjectExternalSourcePathAsList(false);
-				String classpathVariableString = "${" + classpathInfo.getPath()
-						+ "}";
+				String classpathVariableString = variableToExpand(classpathInfo);
 				if (!pathList.contains(classpathVariableString)) {
 					pathList.add(classpathVariableString);
 				}
@@ -142,14 +141,13 @@ public class PyDevPaths {
 		System.out.println("Remove: " + classpathInfo.getPath());
 		PythonNature pyNature = getPythonNature(project);
 		IPythonPathNature pythonPathNature = pyNature.getPythonPathNature();
-		String classpathVariableString = "${" + classpathInfo.getPath() + "}";
+		String classpathVariableString = variableToExpand(classpathInfo);
 		List<String> pathList;
 		try {
 			pathList = pythonPathNature
 					.getProjectExternalSourcePathAsList(false);
-			if (!pathList.contains(classpathVariableString)) {
-				pathList.remove(classpathVariableString);
-			}
+			pathList.remove(classpathVariableString);
+
 			pyNature.getPythonPathNature().setProjectExternalSourcePath(
 					makePyDevPath(pathList));
 			pyNature.rebuildPath();
@@ -157,5 +155,14 @@ public class PyDevPaths {
 			e.printStackTrace();
 		}
 
+	}
+
+	private static String variableToExpand(IClasspathInfo classpathInfo) {
+		String s = classpathInfo.getPath();
+		return variableToExpand(s);
+	}
+
+	private static String variableToExpand(String s) {
+		return "${" + s + "}";
 	}
 }
