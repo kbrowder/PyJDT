@@ -2,6 +2,7 @@ package net.kbserve.pyjdt;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.kbserve.pyjdt.properties.models.IClasspathInfo;
 
@@ -22,11 +23,7 @@ public class PyDevPaths {
 
 	public static synchronized void addClasspath(IProject project,
 			IClasspathInfo classpathInfo) {
-		PythonNature pyNature = getPythonNature(project);
-		IPythonPathNature pythonPathNature = pyNature.getPythonPathNature();
 		try {
-			Map<String, String> vars = pythonPathNature
-					.getVariableSubstitution();
 			IClasspathEntry cpe = JavaCore
 					.getResolvedClasspathEntry(classpathInfo
 							.getClasspath(project));
@@ -35,16 +32,20 @@ public class PyDevPaths {
 			case IClasspathEntry.CPE_PROJECT:
 				IProject libProj = ResourcesPlugin.getWorkspace().getRoot()
 						.getProject(cpe.getPath().lastSegment());
-				IJavaProject javaProject = (IJavaProject) libProj
+				IJavaProject libJavaProject = (IJavaProject) libProj
 						.getNature(JavaCore.NATURE_ID);
-				if (javaProject != null) {
-					value = javaProject.getOutputLocation();
+				if (libJavaProject != null) {
+					value = libJavaProject.getOutputLocation();
 				} else {
 					value = cpe.getPath();
 				}
 				break;
 			case IClasspathEntry.CPE_SOURCE:
 				IPath outputLocation = cpe.getOutputLocation();
+				if (outputLocation == null) {
+					IJavaProject javaProject = JavaCore.create(project);
+					outputLocation = javaProject.getOutputLocation();
+				}
 				if (outputLocation != null) {
 					value = outputLocation;
 				} else {
@@ -58,48 +59,8 @@ public class PyDevPaths {
 				System.out.println("Unsupported classpath: " + cpe);
 				return;
 			}
-			if (value != null) {
-				IPath workspaceLocation = ResourcesPlugin.getWorkspace()
-						.getRoot().getLocation().makeAbsolute();
-				IPath projectLocation = workspaceLocation.append(
-						project.getFullPath()).makeAbsolute();
-				value = workspaceLocation.append(value).makeAbsolute();
-				if (projectLocation.isPrefixOf(value)) {
-					value = value.makeRelativeTo(projectLocation);
-					value = new Path(variableToExpand("project_loc")).append(value);
-				} else if (workspaceLocation.isPrefixOf(value)) {
-					value = value.makeRelativeTo(workspaceLocation);
-					value = new Path(variableToExpand("workspace_loc")).append(value);
-				} else {
-					// nothing
-				}
 
-				vars.put("workspace_loc", workspaceLocation.toOSString());
-
-				vars.put("project_loc", projectLocation.toOSString());
-				String pathString = value.toFile().toString();
-				System.out.println(classpathInfo.getPath() + "\t=>\t"
-						+ pathString);
-				vars.put(classpathInfo.getPath(), pathString);
-
-				pythonPathNature.setVariableSubstitution(vars);
-
-				List<String> pathList = pythonPathNature
-						.getProjectExternalSourcePathAsList(false);
-				String classpathVariableString = variableToExpand(classpathInfo);
-				if (!pathList.contains(classpathVariableString)) {
-					pathList.add(classpathVariableString);
-				}
-				pythonPathNature
-						.setProjectExternalSourcePath(makePyDevPath(pathList));
-			} else {
-				System.err.println("value is null");
-			}
-			pyNature.rebuildPath();
-			System.out
-					.println("PyDev path (expanded): "
-							+ pythonPathNature
-									.getProjectExternalSourcePathAsList(true));
+			addRelPathToPyDev(project, classpathInfo, value);
 
 		} catch (CoreException e) {
 			e.printStackTrace();
@@ -113,7 +74,71 @@ public class PyDevPaths {
 
 	}
 
-	private static String makePyDevPath(List<String> pathList) {
+	private static void addRelPathToPyDev(IProject project,
+			IClasspathInfo classpathInfo, IPath value) throws CoreException,
+			MisconfigurationException, PythonNatureWithoutProjectException {
+		PythonNature pyNature = getPythonNature(project);
+		IPythonPathNature pythonPathNature = pyNature.getPythonPathNature();
+		Map<String, String> vars = pythonPathNature.getVariableSubstitution();
+		if (value != null) {
+			IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot()
+					.getLocation().makeAbsolute();
+			IPath projectLocation = workspaceLocation.append(
+					project.getFullPath()).makeAbsolute();
+			value = makeVarPath(value, project);
+			if (classpathInfo.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				Set<String> pythonSourcePaths = pythonPathNature
+						.getProjectSourcePathSet(false);
+				String sourcePath = makeVarPath(
+						classpathInfo.getClasspath(project).getPath(), project)
+						.toOSString();
+				pythonSourcePaths.add(sourcePath);
+				pythonPathNature.setProjectSourcePath(makePyDevPath(pythonSourcePaths));
+				
+			}
+			vars.put(classpathInfo.getPath(), value.toOSString());
+
+			vars.put("workspace_loc", workspaceLocation.toOSString());
+
+			vars.put("project_loc", projectLocation.toOSString());
+
+			pythonPathNature.setVariableSubstitution(vars);
+
+			List<String> pathList = pythonPathNature
+					.getProjectExternalSourcePathAsList(false);
+			String classpathVariableString = variableToExpand(classpathInfo);
+			if (!pathList.contains(classpathVariableString)) {
+				pathList.add(classpathVariableString);
+			}
+			pythonPathNature
+					.setProjectExternalSourcePath(makePyDevPath(pathList));
+		} else {
+			System.err.println("value is null");
+		}
+		pyNature.rebuildPath();
+		System.out.println("PyDev path (expanded): "
+				+ pythonPathNature.getProjectExternalSourcePathAsList(true));
+	}
+
+	private static IPath makeVarPath(IPath value, IProject project) {
+		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot()
+				.getLocation().makeAbsolute();
+		IPath projectLocation = workspaceLocation.append(project.getFullPath())
+				.makeAbsolute();
+		value = workspaceLocation.append(value).makeAbsolute();
+		if (projectLocation.isPrefixOf(value)) {
+			value = value.makeRelativeTo(projectLocation);
+			value = new Path(variableToExpand("project_loc")).append(value);
+		} else if (workspaceLocation.isPrefixOf(value)) {
+			value = value.makeRelativeTo(workspaceLocation);
+			value = new Path(variableToExpand("workspace_loc")).append(value);
+		} else {
+			// nothing
+		}
+		return value;
+	}
+
+	private static String makePyDevPath(Iterable<String> pathList) {
 		StringBuffer sb = new StringBuffer();
 		boolean first = true;
 		for (String s : pathList) {
@@ -150,6 +175,14 @@ public class PyDevPaths {
 
 			pyNature.getPythonPathNature().setProjectExternalSourcePath(
 					makePyDevPath(pathList));
+			if (classpathInfo.getEntryKind() == IClasspathEntry.CPE_SOURCE) {
+				Set<String> pythonSourcePaths = pythonPathNature
+						.getProjectSourcePathSet(false);
+				String sourcePath = makeVarPath(
+						classpathInfo.getClasspath(project).getPath(), project)
+						.toOSString();
+				pythonSourcePaths.remove(sourcePath);
+			}
 			pyNature.rebuildPath();
 		} catch (CoreException e) {
 			e.printStackTrace();

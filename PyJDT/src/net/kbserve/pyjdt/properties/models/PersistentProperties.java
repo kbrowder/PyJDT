@@ -101,11 +101,6 @@ public class PersistentProperties extends ClasspathContainer implements
 		try {
 			if (jp != null) {
 				for (IClasspathEntry cp : jp.getRawClasspath()) {
-					System.out.println("resolved cp:\t"
-							+ cp.getPath().toFile().getAbsolutePath() + " = "
-							+ cp.getEntryKind());
-					System.out
-							.println("\t\t" + cp.getPath().toPortableString());
 					persistentProperties.getOrCreateChildren(cp);
 				}
 			}
