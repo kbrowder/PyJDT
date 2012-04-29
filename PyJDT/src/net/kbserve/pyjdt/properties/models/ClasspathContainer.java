@@ -1,16 +1,14 @@
 package net.kbserve.pyjdt.properties.models;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.JavaCore;
 
 public class ClasspathContainer implements IClasspathContainer {
-	final Map<IClasspathInfo, IClasspathInfo> classpaths = new TreeMap<IClasspathInfo, IClasspathInfo>();
+	final Set<IClasspathInfo> classpaths = new HashSet<IClasspathInfo>();
 	public ClasspathContainer() {
 		super();
 	}
@@ -21,23 +19,27 @@ public class ClasspathContainer implements IClasspathContainer {
 
 	public synchronized IClasspathInfo getOrCreateChildren(IClasspathEntry path) {
 		//this probably should be tied in more with the listener
-		ClasspathInfo fakeCPE = new ClasspathInfo(path);
-		if (!classpaths.containsKey(fakeCPE)) {
-			ClasspathInfo value = new ClasspathInfo(path);
-			classpaths.put(value, value);
+		for(IClasspathInfo cpi: getChildren()) {
+			if(cpi.getPath().equals(path.getPath().toPortableString())) {
+				return cpi;
+			}
 		}
-		IClasspathInfo returnValue = classpaths.get(fakeCPE);
-		return returnValue;
+		IClasspathInfo cpi = new ClasspathInfo(path);
+		classpaths.add(cpi);
+		return cpi;
 	}
 
 	public synchronized IClasspathInfo getChildren(String path) {
-		ClasspathInfo cpi = new ClasspathInfo();
-		cpi.setPath(path);
-		return classpaths.get(cpi);
+		for(IClasspathInfo cpi: getChildren()) {
+			if(cpi.getPath().equals(path)) {
+				return cpi;
+			}
+		}
+		return null;
 	}
 
 	public synchronized Collection<IClasspathInfo> getChildren() {
-		return new LinkedList<IClasspathInfo>(classpaths.keySet());
+		return new LinkedList<IClasspathInfo>(classpaths);
 	}
 
 	public void setChildren(Collection<IClasspathInfo> classpath) {
@@ -49,7 +51,7 @@ public class ClasspathContainer implements IClasspathContainer {
 			clearChildren();
 		}
 		for (IClasspathInfo cp : classpath) {
-			this.classpaths.put(cp, cp);
+			this.classpaths.add(cp);
 		}
 	
 	}

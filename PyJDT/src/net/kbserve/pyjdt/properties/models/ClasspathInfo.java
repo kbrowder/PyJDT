@@ -1,10 +1,13 @@
 package net.kbserve.pyjdt.properties.models;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
-public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo {
+public class ClasspathInfo implements IClasspathInfo {
 	//TODO: probably should use JavaCore.getResolvedClasspathEntry to get additional information after the bean has been loaded
-	//TODO: Should we really be doing this? we could just bean-ify IClasspathEntry
 	private String path;
 	private boolean enabled = true;
 	private int entryKind = 0;
@@ -44,23 +47,6 @@ public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo 
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		return compareTo(obj) == 0;
-	}
-
-	@Override
-	public int compareTo(Object obj) {
-		if (obj instanceof IClasspathInfo) {
-			return this.compareTo(((IClasspathInfo) obj).getPath());
-		} else if (obj instanceof IClasspathEntry) {
-			return this.compareTo(((IClasspathEntry) obj).getPath()
-					.toPortableString());
-		}
-		return getPath().compareTo(obj.toString());
-
-	}
-
-	@Override
 	public int getEntryKind() {
 		return entryKind;
 	}
@@ -69,5 +55,23 @@ public class ClasspathInfo extends ClasspathContainer implements IClasspathInfo 
 	public void setEntryKind(int type) {
 		this.entryKind = type;
 	}
+
+	@Override
+	public IClasspathEntry getClasspath(IProject project) {
+		IJavaProject javaProject = JavaCore.create(project);
+		try {
+			for(IClasspathEntry icp: javaProject.getRawClasspath()) {
+				if(icp.getPath().toPortableString().equals(getPath())) {
+					return icp;
+				}
+			}
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
 
 }

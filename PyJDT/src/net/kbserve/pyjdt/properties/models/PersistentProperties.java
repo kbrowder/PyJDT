@@ -12,22 +12,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.kbserve.pyjdt.Activator;
+import net.kbserve.pyjdt.PyDevPaths;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.python.pydev.plugin.nature.PythonNature;
 
-public class PersistentProperties extends ClasspathContainer implements IPersistentProperties {
-	
+public class PersistentProperties extends ClasspathContainer implements
+		IPersistentProperties {
+
 	final protected static Map<IProject, PersistentProperties> props = new HashMap<IProject, PersistentProperties>();
 
 	protected static IPath getLibrariesXml(IProject project) {
 		return getWorkingLocation(project).append("libraries.xml");
 	};
+
 	protected static IPath getWorkingLocation(IProject project) {
 		return project.getWorkingLocation(Activator.PLUGIN_ID);
 	}
-	
 
 	private boolean pyjdtSynchronized;
 
@@ -53,6 +59,7 @@ public class PersistentProperties extends ClasspathContainer implements IPersist
 		}
 		return pp;
 	}
+
 	public static synchronized IClasspathContainer reload(IProject project) {
 		props.remove(project);
 		return load(project);
@@ -85,6 +92,39 @@ public class PersistentProperties extends ClasspathContainer implements IPersist
 	@Override
 	public synchronized void setEnabled(boolean sync) {
 		this.pyjdtSynchronized = sync;
+
+	}
+
+	public static void updateClasspaths(IProject project) {
+		IJavaProject jp = JavaCore.create(project);
+		IPersistentProperties persistentProperties = load(jp.getProject());
+		try {
+			if (jp != null) {
+				for (IClasspathEntry cp : jp.getRawClasspath()) {
+					System.out.println("resolved cp:\t"
+							+ cp.getPath().toFile().getAbsolutePath() + " = "
+							+ cp.getEntryKind());
+					System.out
+							.println("\t\t" + cp.getPath().toPortableString());
+					persistentProperties.getOrCreateChildren(cp);
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+
+		for (IClasspathInfo cpi : persistentProperties.getChildren()) {
+			IClasspathEntry cpe = cpi.getClasspath(project);
+			if (cpi.isEnabled() && cpe != null && persistentProperties.isEnabled()) {
+				PyDevPaths.addClasspath(project, cpi);
+			} else {
+				PyDevPaths.removeClasspath(project, cpi);
+			}
+		}
+
+	}
+
+	public void addClasspath(IProject project) {
 
 	}
 

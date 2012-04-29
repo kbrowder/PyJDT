@@ -1,9 +1,7 @@
 package net.kbserve.pyjdt;
 
-import net.kbserve.pyjdt.properties.models.IClasspathInfo;
 import net.kbserve.pyjdt.properties.models.PersistentProperties;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ElementChangedEvent;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -11,7 +9,6 @@ import org.eclipse.jdt.core.IElementChangedListener;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaElementDelta;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.python.pydev.plugin.nature.PythonNature;
 
 public class JDTChangeListener implements IElementChangedListener {
@@ -22,7 +19,7 @@ public class JDTChangeListener implements IElementChangedListener {
 
 		IJavaProject jp = element.getJavaProject();
 		if (jp != null) {
-			updateClasspaths(jp.getProject());
+			PersistentProperties.updateClasspaths(jp.getProject());
 		}
 
 		parseDelta(delta);
@@ -66,36 +63,6 @@ public class JDTChangeListener implements IElementChangedListener {
 		for (IJavaElementDelta d : delta.getAffectedChildren()) {
 			parseDelta(d);
 		}
-	}
-
-	public static void updateClasspaths(IProject project) {// TODO: moveme
-		IJavaProject jp = JavaCore.create(project);
-		try {
-			if (jp != null) {
-				for (IClasspathEntry cp : jp.getRawClasspath()) {
-					System.out.println("resolved cp:\t"
-							+ cp.getPath().toFile().getAbsolutePath() + " = "
-							+ cp.getEntryKind());
-					System.out
-							.println("\t\t" + cp.getPath().toPortableString());
-					IClasspathInfo cpe = PersistentProperties.load(
-							jp.getProject()).getOrCreateChildren(cp);
-					for (IClasspathEntry i : JavaCore
-							.getReferencedClasspathEntries(cp,
-									JavaCore.create(project))) { //TODO: is this correct?
-						System.out.println("Child:"+i);
-						cpe.getOrCreateChildren(i);
-					}
-
-				}
-
-				PythonNature pythonNature = (PythonNature) jp.getProject()
-						.getNature(PythonNature.PYTHON_NATURE_ID);
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 }

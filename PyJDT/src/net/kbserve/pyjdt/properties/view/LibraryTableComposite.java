@@ -1,6 +1,5 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.JDTChangeListener;
 import net.kbserve.pyjdt.properties.models.IClasspathInfo;
 import net.kbserve.pyjdt.properties.models.IPersistentProperties;
 import net.kbserve.pyjdt.properties.models.PersistentProperties;
@@ -47,7 +46,7 @@ public class LibraryTableComposite extends Composite {
 	public void pack(boolean changed) {
 		IPersistentProperties persistentProperties = PersistentProperties
 				.load(project);
-		JDTChangeListener.updateClasspaths(project);
+		PersistentProperties.updateClasspaths(project);
 		table.clearAll(true);
 		table.setItemCount(0);
 		
@@ -107,20 +106,6 @@ public class LibraryTableComposite extends Composite {
 		ti.setText(cp.getPath());
 		ti.setChecked(cp.isEnabled());
 		ti.setData(cp);
-		for(IClasspathInfo child: cp.getChildren()) {
-			setupClasspathInfo(ti, child);
-		}
-	}
-
-	private void setupClasspathInfo(TreeItem ti, IClasspathInfo cp) {
-		ti = new TreeItem(ti, SWT.NONE);
-		ti.setText(cp.getPath());
-		ti.setChecked(cp.isEnabled());
-		ti.setData(cp);
-		for(IClasspathInfo child: cp.getChildren()) {
-			setupClasspathInfo(ti, child);
-		}
-		
 	}
 
 }
