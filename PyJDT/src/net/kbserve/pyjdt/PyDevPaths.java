@@ -74,9 +74,9 @@ public class PyDevPaths {
 					// nothing
 				}
 
-				vars.put("workspace_location", workspaceLocation.toOSString());
+				vars.put("workspace_loc", workspaceLocation.toOSString());
 
-				vars.put("project_location", projectLocation.toOSString());
+				vars.put("project_loc", projectLocation.toOSString());
 				String pathString = value.toFile().toString();
 				System.out.println(classpathInfo.getPath() + "\t=>\t"
 						+ pathString);
