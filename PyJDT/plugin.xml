@@ -26,5 +26,11 @@
          point="org.eclipse.ui.startup">
       <startup class="net.kbserve.pyjdt.startup.Startup" />
    </extension>
+   <extension
+         point="org.python.pydev.pydev_pythonpath_contrib">
+      <path_contributor
+            class="net.kbserve.pyjdt.PythonPathContributor">
+      </path_contributor>
+   </extension>
 
 </plugin>

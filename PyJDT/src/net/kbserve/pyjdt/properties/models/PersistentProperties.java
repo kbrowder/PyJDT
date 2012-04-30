@@ -8,31 +8,48 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.kbserve.pyjdt.Activator;
-import net.kbserve.pyjdt.PyDevPaths;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
-import org.python.pydev.plugin.nature.PythonNature;
 
 public class PersistentProperties extends ClasspathContainer implements
 		IPersistentProperties {
 
 	final protected static Map<IProject, PersistentProperties> props = new HashMap<IProject, PersistentProperties>();
 
-	protected static IPath getLibrariesXml(IProject project) {
-		return getWorkingLocation(project).append("libraries.xml");
+	protected static IFile getLibrariesXml(IProject project) {
+		return getWorkingLocation(project).getFile(Activator.PLUGIN_ID+".prefs");
 	};
 
-	protected static IPath getWorkingLocation(IProject project) {
-		return project.getWorkingLocation(Activator.PLUGIN_ID);
+	protected static IFolder getWorkingLocation(IProject project) {
+		IFolder settings = project.getFolder(".settings");
+		if(!settings.exists()) {
+			try {
+				settings.create(IResource.HIDDEN, true, null);
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		IFolder pluginFolder = settings.getFolder(Activator.PLUGIN_ID);
+		if(!pluginFolder.exists()) {
+			try {
+				pluginFolder.create(IResource.HIDDEN, true, null);
+			} catch (CoreException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return pluginFolder;
 	}
 
 	private boolean pyjdtSynchronized;
@@ -42,7 +59,7 @@ public class PersistentProperties extends ClasspathContainer implements
 	public static synchronized IPersistentProperties load(IProject project) {
 		PersistentProperties pp = props.get(project);
 		if (pp == null) {
-			File libxml = getLibrariesXml(project).toFile();
+			File libxml = getLibrariesXml(project).getFullPath().toFile();
 			if (libxml.exists()) {
 				try {
 					XMLDecoder d = new XMLDecoder(new BufferedInputStream(
@@ -69,7 +86,7 @@ public class PersistentProperties extends ClasspathContainer implements
 		setEnabled(false);
 	}
 
-	private IPath getLibrariesXml() {
+	private IFile getLibrariesXml() {
 		return getLibrariesXml(project);
 	}
 
@@ -80,13 +97,29 @@ public class PersistentProperties extends ClasspathContainer implements
 
 	@Override
 	public synchronized void save() throws CoreException, FileNotFoundException {
-		IPath loc = getLibrariesXml();
+		IFile loc = getLibrariesXml();
 		System.out.println("xml:" + loc);
-		loc.toFile().getParentFile().mkdirs();
-		XMLEncoder e = new XMLEncoder(new BufferedOutputStream(
-				new FileOutputStream(loc.toFile())));
-		e.writeObject(this);
-		e.close();
+
+		
+		
+		try {
+			
+			loc.getFullPath().toFile().getParentFile().mkdirs();
+			if(loc.exists()) {
+				loc.delete(true, null);
+			}
+			//loc.create(pis, IResource.HIDDEN, null);//TODO: add progress monitor
+			XMLEncoder e = new XMLEncoder(new BufferedOutputStream(
+					new FileOutputStream(loc.getFullPath().toFile())));
+			e.writeObject(this);
+			e.close();
+		} catch (IOException e1) {
+			throw new RuntimeException(e1);
+		}
+		
+		
+		
+		
 	}
 
 	@Override
@@ -107,19 +140,6 @@ public class PersistentProperties extends ClasspathContainer implements
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
-
-		for (IClasspathInfo cpi : persistentProperties.getChildren()) {
-			IClasspathEntry cpe = cpi.getClasspath(project);
-			if (cpi.isEnabled() && cpe != null && persistentProperties.isEnabled()) {
-				PyDevPaths.addClasspath(project, cpi);
-			} else {
-				PyDevPaths.removeClasspath(project, cpi);
-			}
-		}
-
-	}
-
-	public void addClasspath(IProject project) {
 
 	}
 
