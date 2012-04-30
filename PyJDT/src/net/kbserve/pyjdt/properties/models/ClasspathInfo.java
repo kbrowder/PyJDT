@@ -71,6 +71,11 @@ public class ClasspathInfo implements IClasspathInfo {
 		}
 		return null;
 	}
+
+	@Override
+	public void accept(IClasspathVisitor visitor) {
+		visitor.visit(this);		
+	}
 	
 	
 

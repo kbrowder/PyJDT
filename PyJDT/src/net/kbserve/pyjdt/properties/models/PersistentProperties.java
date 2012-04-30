@@ -29,12 +29,13 @@ public class PersistentProperties extends ClasspathContainer implements
 	final protected static Map<IProject, PersistentProperties> props = new HashMap<IProject, PersistentProperties>();
 
 	protected static IFile getLibrariesXml(IProject project) {
-		return getWorkingLocation(project).getFile(Activator.PLUGIN_ID+".prefs");
+		return getWorkingLocation(project).getFile(
+				Activator.PLUGIN_ID + ".prefs");
 	};
 
 	protected static IFolder getWorkingLocation(IProject project) {
 		IFolder settings = project.getFolder(".settings");
-		if(!settings.exists()) {
+		if (!settings.exists()) {
 			try {
 				settings.create(IResource.HIDDEN, true, null);
 			} catch (CoreException e) {
@@ -42,7 +43,7 @@ public class PersistentProperties extends ClasspathContainer implements
 			}
 		}
 		IFolder pluginFolder = settings.getFolder(Activator.PLUGIN_ID);
-		if(!pluginFolder.exists()) {
+		if (!pluginFolder.exists()) {
 			try {
 				pluginFolder.create(IResource.HIDDEN, true, null);
 			} catch (CoreException e) {
@@ -51,10 +52,6 @@ public class PersistentProperties extends ClasspathContainer implements
 		}
 		return pluginFolder;
 	}
-
-	private boolean pyjdtSynchronized;
-
-	transient protected IProject project = null;
 
 	public static synchronized IPersistentProperties load(IProject project) {
 		PersistentProperties pp = props.get(project);
@@ -82,8 +79,32 @@ public class PersistentProperties extends ClasspathContainer implements
 		return load(project);
 	}
 
+	public static void updateClasspaths(IProject project) {
+		IJavaProject jp = JavaCore.create(project);
+		IPersistentProperties persistentProperties = load(jp.getProject());
+		try {
+			if (jp != null) {
+				for (IClasspathEntry cp : jp.getRawClasspath()) {
+					persistentProperties.getOrCreateChildren(cp);
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private boolean pyjdtSynchronized;
+
+	transient protected IProject project = null;
+
 	public PersistentProperties() {
 		setEnabled(false);
+	}
+
+	@Override
+	public void accept(IClasspathVisitor visitor) {
+		visitor.visit(this);
 	}
 
 	private IFile getLibrariesXml() {
@@ -100,15 +121,14 @@ public class PersistentProperties extends ClasspathContainer implements
 		IFile loc = getLibrariesXml();
 		System.out.println("xml:" + loc);
 
-		
-		
 		try {
-			
+
 			loc.getFullPath().toFile().getParentFile().mkdirs();
-			if(loc.exists()) {
+			if (loc.exists()) {
 				loc.delete(true, null);
 			}
-			//loc.create(pis, IResource.HIDDEN, null);//TODO: add progress monitor
+			// loc.create(pis, IResource.HIDDEN, null);//TODO: add progress
+			// monitor
 			XMLEncoder e = new XMLEncoder(new BufferedOutputStream(
 					new FileOutputStream(loc.getFullPath().toFile())));
 			e.writeObject(this);
@@ -116,30 +136,12 @@ public class PersistentProperties extends ClasspathContainer implements
 		} catch (IOException e1) {
 			throw new RuntimeException(e1);
 		}
-		
-		
-		
-		
+
 	}
 
 	@Override
 	public synchronized void setEnabled(boolean sync) {
 		this.pyjdtSynchronized = sync;
-
-	}
-
-	public static void updateClasspaths(IProject project) {
-		IJavaProject jp = JavaCore.create(project);
-		IPersistentProperties persistentProperties = load(jp.getProject());
-		try {
-			if (jp != null) {
-				for (IClasspathEntry cp : jp.getRawClasspath()) {
-					persistentProperties.getOrCreateChildren(cp);
-				}
-			}
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
 
 	}
 

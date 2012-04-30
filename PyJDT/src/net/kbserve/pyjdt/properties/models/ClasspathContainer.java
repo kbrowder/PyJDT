@@ -17,7 +17,7 @@ public class ClasspathContainer implements IClasspathContainer {
 		classpaths.clear();
 	}
 
-	public synchronized IClasspathInfo getOrCreateChildren(IClasspathEntry path) {
+	public synchronized IPropertyAcceptor getOrCreateChildren(IClasspathEntry path) {
 		//this probably should be tied in more with the listener
 		for(IClasspathInfo cpi: getChildren()) {
 			if(cpi.getPath().equals(path.getPath().toPortableString())) {
@@ -29,7 +29,7 @@ public class ClasspathContainer implements IClasspathContainer {
 		return cpi;
 	}
 
-	public synchronized IClasspathInfo getChildren(String path) {
+	public synchronized IPropertyAcceptor getChildren(String path) {
 		for(IClasspathInfo cpi: getChildren()) {
 			if(cpi.getPath().equals(path)) {
 				return cpi;

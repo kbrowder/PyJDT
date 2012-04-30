@@ -1,6 +1,7 @@
 package net.kbserve.pyjdt;
 
 import net.kbserve.pyjdt.properties.models.IClasspathInfo;
+import net.kbserve.pyjdt.properties.models.IClasspathVisitor;
 import net.kbserve.pyjdt.properties.models.IPersistentProperties;
 import net.kbserve.pyjdt.properties.models.PersistentProperties;
 
@@ -16,6 +17,32 @@ import org.python.pydev.plugin.nature.IPythonPathContributor;
 
 public class PythonPathContributor implements IPythonPathContributor {
 
+	private class ClasspathVisitor implements IClasspathVisitor {
+
+		private IProject project;
+		private IJavaProject javaProject;
+
+		public ClasspathVisitor(IJavaProject javaProject) {
+			this.project = javaProject.getProject();
+			this.javaProject = javaProject;
+		}
+		@Override
+		public void visit(IClasspathInfo classpathInfo) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void visit(IPersistentProperties persistantProperties) {
+			if(persistantProperties.isEnabled()) {
+				for(IClasspathInfo ci: persistantProperties.getChildren()) {
+					
+				}
+			}
+			
+		}
+		
+	}
 	@Override
 	public String getAdditionalPythonPath(IProject project) {
 		IJavaProject javaProject = null;
@@ -91,6 +118,8 @@ public class PythonPathContributor implements IPythonPathContributor {
 		case IClasspathEntry.CPE_LIBRARY:
 			value = cpe.getPath();
 			break;
+		case IClasspathEntry.CPE_CONTAINER:
+			JavaCore.getClasspathContainer(cpe.getPath(), javaProject);
 		default:
 			System.out.println("Unsupported classpath: " + cpe);
 			break;

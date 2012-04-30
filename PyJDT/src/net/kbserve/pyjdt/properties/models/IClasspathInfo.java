@@ -5,7 +5,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 
 
 
-public interface IClasspathInfo {
+public interface IClasspathInfo extends IPropertyAcceptor {
 	public String getPath();
 	public void setPath(String path);
 	public boolean isEnabled();
