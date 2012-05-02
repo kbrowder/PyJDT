@@ -70,6 +70,7 @@ public class RootContainer extends AbstractContainer {
 			}
 			reverseRoots.put(rc, project);
 			roots.put(project, rc);
+			rc.update();
 		}
 		return rc;
 	}
