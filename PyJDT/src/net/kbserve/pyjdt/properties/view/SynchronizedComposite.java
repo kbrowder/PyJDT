@@ -53,7 +53,7 @@ public class SynchronizedComposite extends Composite {
 	@Override
 	public void pack(boolean changed) {
 		RootContainer root = RootContainer.getRoot(project);
-		boolean enabled = root.isEnabled() != null && root.isEnabled().booleanValue();
+		boolean enabled = root.getEnabled() != null && root.getEnabled().booleanValue();
 		this.setSelection(enabled);//TODO: tri-state checkbox
 		syncCheckbox.pack(changed);
 		super.pack(changed);

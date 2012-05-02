@@ -78,7 +78,7 @@ public class LibraryTableComposite extends Composite {
 			setupClasspathInfo(table, child);
 		}
 
-		boolean enabled = root.isEnabled() != null && root.isEnabled().booleanValue();
+		boolean enabled = root.getEnabled() != null && root.getEnabled().booleanValue();
 		table.setEnabled(enabled);//TODO: tri-state checkbox
 		table.pack(changed);
 		super.pack(changed);
@@ -87,7 +87,7 @@ public class LibraryTableComposite extends Composite {
 	private void setupClasspathInfo(Tree tree, IJDTClasspathContainer cp) {
 		TreeItem ti = new TreeItem(tree, SWT.NONE);
 		ti.setText(cp.getPath());
-		boolean enabled = cp.isEnabled() != null && cp.isEnabled().booleanValue();
+		boolean enabled = cp.getEnabled() != null && cp.getEnabled().booleanValue();
 		//TODO: tri-state checkbox
 		ti.setChecked(enabled);
 		ti.setData(cp);
@@ -98,7 +98,7 @@ public class LibraryTableComposite extends Composite {
 	private void setupClasspathInfo(TreeItem treeItem, IJDTClasspathContainer cp) {
 		TreeItem ti = new TreeItem(treeItem, SWT.NONE);
 		ti.setText(cp.getPath());
-		boolean enabled = cp.isEnabled() != null && cp.isEnabled().booleanValue();
+		boolean enabled = cp.getEnabled() != null && cp.getEnabled().booleanValue();
 		//TODO: tri-state checkbox
 		ti.setChecked(enabled);
 		ti.setData(cp);

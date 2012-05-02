@@ -74,7 +74,7 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return false;
 	}
 
-	public Boolean isEnabled() {
+	public Boolean getEnabled() {
 		return this.enabled;
 	}
 

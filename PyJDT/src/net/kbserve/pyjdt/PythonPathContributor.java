@@ -15,19 +15,24 @@ public class PythonPathContributor implements IPythonPathContributor {
 			IJavaProject javaProject) {
 		IProject project = javaProject.getProject();
 		StringBuffer sb = new StringBuffer();
-		if (classpathContainer.isEnabled()!= null && classpathContainer.isEnabled() == true) {
+		System.out.println("Making path for:" + classpathContainer.getPath());
+		if (classpathContainer.getEnabled() != null
+				&& classpathContainer.getEnabled() == true) {
 			sb.append(classpathContainer.getRealPath(project));
-			boolean first = sb.length()==0;
-			for(IJDTClasspathContainer child: classpathContainer.getChildren()) {
+			boolean first = sb.length() == 0;
+			for (IJDTClasspathContainer child : classpathContainer
+					.getChildren()) {
 				StringBuffer childStringBuffer = makePaths(child, javaProject);
-				if (first==false) {
-					sb.append("|");
+				if (first == false) {
+					if (childStringBuffer.length() > 0) {
+						sb.append("|");
+					}
 				} else {
 					first = false;
 				}
 				sb.append(childStringBuffer);
 			}
-			
+
 		}
 		return sb;
 	}
@@ -43,7 +48,7 @@ public class PythonPathContributor implements IPythonPathContributor {
 			RootContainer root = RootContainer.getRoot(project);
 			root.update();
 			String paths = makePaths(root, javaProject).toString();
-			System.out.println("PyJDT path:"+paths);
+			System.out.println("PyJDT path:" + paths);
 			return paths;
 		}
 		return null;

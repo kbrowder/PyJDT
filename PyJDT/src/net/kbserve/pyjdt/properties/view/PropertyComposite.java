@@ -40,7 +40,7 @@ public class PropertyComposite extends Composite {
 		});
 		libsTbl = new LibraryTableComposite(this, SWT.NONE, project);
 		RootContainer root = RootContainer.getRoot(project);
-		boolean enabled = root.isEnabled() != null && root.isEnabled().booleanValue();
+		boolean enabled = root.getEnabled() != null && root.getEnabled().booleanValue();
 		//TODO: tri-state checkbox
 		syncCheckbox.setSelection(enabled);
 	}

@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -109,15 +110,15 @@ public class RootContainer extends AbstractContainer {
 		System.out.println("xml:" + loc);
 
 		try {
-
-			loc.getFullPath().toFile().getParentFile().mkdirs();
+			IPath path = prependWorkspaceLoc(loc.getFullPath());
+			path.toFile().getParentFile().mkdirs();
 			if (loc.exists()) {
 				loc.delete(true, null);
 			}
 			// loc.create(pis, IResource.HIDDEN, null);//TODO: add progress
 			// monitor
 			XMLEncoder e = new XMLEncoder(new BufferedOutputStream(
-					new FileOutputStream(loc.getFullPath().toFile())));
+					new FileOutputStream(path.toFile())));
 			e.writeObject(this);
 			e.close();
 		} catch (IOException e1) {
