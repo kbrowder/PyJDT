@@ -1,8 +1,7 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.properties.models_bad.IClasspathInfo;
-import net.kbserve.pyjdt.properties.models_bad.IPersistentProperties;
-import net.kbserve.pyjdt.properties.models_bad.PersistentProperties;
+import net.kbserve.pyjdt.properties.models.IJDTClasspathContainer;
+import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
@@ -13,7 +12,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class LibraryTableComposite extends Composite {
@@ -29,11 +27,11 @@ public class LibraryTableComposite extends Composite {
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		table = new Tree(this, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL
-		        | SWT.H_SCROLL);
-		//table.setHeaderVisible(true);
-		//TreeColumn tc = new TreeColumn(table, SWT.NONE);
-		//tc.setWidth(400);
-		//tc.setText("Libraries");
+				| SWT.H_SCROLL);
+		// table.setHeaderVisible(true);
+		// TreeColumn tc = new TreeColumn(table, SWT.NONE);
+		// tc.setWidth(400);
+		// tc.setText("Libraries");
 		table.setLayout(new FillLayout());
 		this.project = project;
 	}
@@ -44,27 +42,11 @@ public class LibraryTableComposite extends Composite {
 
 	@Override
 	public void pack(boolean changed) {
-		IPersistentProperties persistentProperties = PersistentProperties
-				.load(project);
-		PersistentProperties.updateClasspaths(project);
+		RootContainer rootContainer = RootContainer.getRoot(project);
+		rootContainer.update();
 		table.clearAll(true);
 		table.setItemCount(0);
-		
 
-		/*table.addTreeListener(new TreeListener() {
-			
-			@Override
-			public void treeExpanded(TreeEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void treeCollapsed(TreeEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		})*/
 		table.addListener(SWT.Expand, new Listener() {
 
 			@Override
@@ -82,8 +64,8 @@ public class LibraryTableComposite extends Composite {
 					System.out.println("Selection: " + arg0.item);
 					try {
 						TreeItem tree = (TreeItem) arg0.item;
-						IClasspathInfo cpi = (IClasspathInfo) tree.getData();
-						cpi.setEnabled(tree.getChecked());
+						IJDTClasspathContainer cpc = (IJDTClasspathContainer) tree.getData();
+						cpc.setEnabled(tree.getChecked());
 						tree.setExpanded(false);
 					} catch (ClassCastException e) {
 					}
@@ -92,17 +74,26 @@ public class LibraryTableComposite extends Composite {
 			}
 		});
 
-		for (IClasspathInfo cp : persistentProperties.getChildren()) {
-			setupClasspathInfo(table, cp);			
+		for (IJDTClasspathContainer child : rootContainer.getChildren()) {
+			setupClasspathInfo(table, child);
 		}
 
-		table.setEnabled(persistentProperties.isEnabled());
+		table.setEnabled(rootContainer.isEnabled());
 		table.pack(changed);
 		super.pack(changed);
 	}
 
-	private void setupClasspathInfo(Tree tree, IClasspathInfo cp) {
+	private void setupClasspathInfo(Tree tree, IJDTClasspathContainer cp) {
 		TreeItem ti = new TreeItem(tree, SWT.NONE);
+		ti.setText(cp.getPath());
+		ti.setChecked(cp.isEnabled());
+		ti.setData(cp);
+		for (IJDTClasspathContainer child : cp.getChildren()) {
+			setupClasspathInfo(ti, child);
+		}
+	}
+	private void setupClasspathInfo(TreeItem treeItem, IJDTClasspathContainer cp) {
+		TreeItem ti = new TreeItem(treeItem, SWT.NONE);
 		ti.setText(cp.getPath());
 		ti.setChecked(cp.isEnabled());
 		ti.setData(cp);

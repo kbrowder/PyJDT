@@ -1,7 +1,6 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.properties.models_bad.IPersistentProperties;
-import net.kbserve.pyjdt.properties.models_bad.PersistentProperties;
+import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
@@ -23,9 +22,8 @@ public class SynchronizedComposite extends Composite {
 		syncCheckbox.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				IPersistentProperties persistentProperties = PersistentProperties
-						.load(project);
-				persistentProperties.setEnabled(syncCheckbox.getSelection());
+				RootContainer root = RootContainer.getRoot(project);
+				root.setEnabled(syncCheckbox.getSelection());
 			}
 
 			@Override
@@ -54,9 +52,8 @@ public class SynchronizedComposite extends Composite {
 
 	@Override
 	public void pack(boolean changed) {
-		IPersistentProperties persistentProperties = PersistentProperties
-				.load(project);
-		this.setSelection(persistentProperties.isEnabled());
+		RootContainer root = RootContainer.getRoot(project);
+		this.setSelection(root.isEnabled());
 		syncCheckbox.pack(changed);
 		super.pack(changed);
 	}
