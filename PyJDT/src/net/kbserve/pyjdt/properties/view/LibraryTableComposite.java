@@ -1,8 +1,8 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.properties.models.IClasspathInfo;
-import net.kbserve.pyjdt.properties.models.IPersistentProperties;
-import net.kbserve.pyjdt.properties.models.PersistentProperties;
+import net.kbserve.pyjdt.properties.models_bad.IClasspathInfo;
+import net.kbserve.pyjdt.properties.models_bad.IPersistentProperties;
+import net.kbserve.pyjdt.properties.models_bad.PersistentProperties;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;

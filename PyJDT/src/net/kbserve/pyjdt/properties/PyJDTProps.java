@@ -2,8 +2,8 @@ package net.kbserve.pyjdt.properties;
 
 import java.io.FileNotFoundException;
 
-import net.kbserve.pyjdt.properties.models.IPersistentProperties;
-import net.kbserve.pyjdt.properties.models.PersistentProperties;
+import net.kbserve.pyjdt.properties.models_bad.IPersistentProperties;
+import net.kbserve.pyjdt.properties.models_bad.PersistentProperties;
 import net.kbserve.pyjdt.properties.view.PropertyComposite;
 
 import org.eclipse.core.resources.IProject;
@@ -38,7 +38,7 @@ public class PyJDTProps extends PropertyPage {
 
 	protected void performDefaults() {
 		super.performDefaults();
-		PersistentProperties.reload(getElement());
+		PersistentProperties.revert(getElement());
 		propertyComposite.pack();
 	}
 

@@ -22,15 +22,15 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 
-public class PersistentProperties extends ClasspathContainer implements
-		IPersistentProperties {
-
-	final protected static Map<IProject, PersistentProperties> props = new HashMap<IProject, PersistentProperties>();
+public class RootContainer extends AbstractContainer {
+	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
+	private static final Map<RootContainer, IProject> reverseRoots = new HashMap<RootContainer, IProject>();
 
 	protected static IFile getLibrariesXml(IProject project) {
 		return getWorkingLocation(project).getFile(
-				Activator.PLUGIN_ID + ".prefs");
+				Activator.PLUGIN_ID + ".root.prefs");
 	};
 
 	protected static IFolder getWorkingLocation(IProject project) {
@@ -53,72 +53,58 @@ public class PersistentProperties extends ClasspathContainer implements
 		return pluginFolder;
 	}
 
-	public static synchronized IPersistentProperties load(IProject project) {
-		PersistentProperties pp = props.get(project);
-		if (pp == null) {
+	public static synchronized RootContainer getRoot(IProject project) {
+		RootContainer rc = roots.get(project);
+		if (rc == null) {
 			File libxml = getLibrariesXml(project).getFullPath().toFile();
 			if (libxml.exists()) {
 				try {
 					XMLDecoder d = new XMLDecoder(new BufferedInputStream(
 							new FileInputStream(libxml)));
-					pp = (PersistentProperties) d.readObject();
+					rc = (RootContainer) d.readObject();
 				} catch (Exception e) {
 				}
 			}
-			if (pp == null) {
-				pp = new PersistentProperties();
+			if (rc == null) {
+				rc = new RootContainer();
 			}
-			props.put(project, pp);
-			pp.project = project;
+			reverseRoots.put(rc, project);
+			roots.put(project, rc);
 		}
-		return pp;
+		return rc;
 	}
 
-	public static synchronized IClasspathContainer reload(IProject project) {
-		props.remove(project);
-		return load(project);
-	}
+	public synchronized void update() {
+		IProject project = reverseRoots.get(this);
+		IJavaProject javaProject = JavaCore.create(project);
 
-	public static void updateClasspaths(IProject project) {
-		IJavaProject jp = JavaCore.create(project);
-		IPersistentProperties persistentProperties = load(jp.getProject());
 		try {
-			if (jp != null) {
-				for (IClasspathEntry cp : jp.getRawClasspath()) {
-					persistentProperties.getOrCreateChildren(cp);
-				}
+			for (IClasspathEntry icp : javaProject.getRawClasspath()) {
+				this.updateChild(icp, project);
 			}
-		} catch (CoreException e) {
+		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-
 	}
-
-	private boolean pyjdtSynchronized;
-
-	transient protected IProject project = null;
-
-	public PersistentProperties() {
-		setEnabled(false);
-	}
-
 	@Override
-	public void accept(IClasspathVisitor visitor) {
-		visitor.visit(this);
+	public String getRealPath(IProject project) {
+		//TODO: What about the source path?
+		IJavaProject javaProject = JavaCore.create(project);
+		try {
+			return makeStringPath(prependWorkspaceLoc(javaProject.getOutputLocation())
+					.makeAbsolute());
+		} catch (JavaModelException e) {
+			throw new RuntimeException(e);
+		}	
+	}
+	
+	public static synchronized RootContainer revert(IProject project) {
+		reverseRoots.remove(roots.remove(project));
+		return getRoot(project);
 	}
 
-	private IFile getLibrariesXml() {
-		return getLibrariesXml(project);
-	}
-
-	@Override
-	public synchronized boolean isEnabled() {
-		return this.pyjdtSynchronized;
-	}
-
-	@Override
 	public synchronized void save() throws CoreException, FileNotFoundException {
-		IFile loc = getLibrariesXml();
+		IFile loc = getLibrariesXml(reverseRoots.get(this));
 		System.out.println("xml:" + loc);
 
 		try {
@@ -138,11 +124,4 @@ public class PersistentProperties extends ClasspathContainer implements
 		}
 
 	}
-
-	@Override
-	public synchronized void setEnabled(boolean sync) {
-		this.pyjdtSynchronized = sync;
-
-	}
-
 }

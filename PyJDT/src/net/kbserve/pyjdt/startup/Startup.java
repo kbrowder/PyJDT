@@ -3,9 +3,6 @@
  */
 package net.kbserve.pyjdt.startup;
 
-import net.kbserve.pyjdt.JDTChangeListener;
-
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.ui.IStartup;
 
 /**
@@ -19,7 +16,6 @@ public class Startup implements IStartup {
 	 */
 	@Override
 	public void earlyStartup() {
-		JavaCore.addElementChangedListener(new JDTChangeListener());
 
 	}
 
