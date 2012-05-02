@@ -16,15 +16,18 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 	public static String makeStringPath(IClasspathEntry classpathEntry) {
 		return makeStringPath(classpathEntry.getPath());
 	}
+
 	public static String makeStringPath(IPath path) {
 		return path.toPortableString();
 	}
+
 	protected static IPath prependWorkspaceLoc(IPath value) {
 		IPath workspaceLocation = ResourcesPlugin.getWorkspace().getRoot()
 				.getLocation().makeAbsolute();
 		value = workspaceLocation.append(value).makeAbsolute();
 		return value;
 	}
+
 	private Boolean enabled = null;
 	private List<IJDTClasspathContainer> children = new ArrayList<IJDTClasspathContainer>();
 
@@ -92,8 +95,9 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 	}
 
 	@Override
-	public synchronized IJDTClasspathContainer updateChild(IClasspathEntry child, IProject project) {
-		
+	public synchronized IJDTClasspathContainer updateChild(
+			IClasspathEntry child, IProject project) {
+
 		String stringPath = makeStringPath(child);
 		IJDTClasspathContainer icp = getChild(stringPath);
 		if (icp == null) {
@@ -118,7 +122,7 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 						"Unsupported IClasspathEntry.getEntryKind() = '"
 								+ child.getEntryKind() + "' on " + child);
 			}
-			
+			children.add(icp);
 		}
 		icp.setPath(stringPath);
 		return icp;

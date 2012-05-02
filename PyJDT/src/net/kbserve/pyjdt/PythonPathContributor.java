@@ -15,7 +15,7 @@ public class PythonPathContributor implements IPythonPathContributor {
 			IJavaProject javaProject) {
 		IProject project = javaProject.getProject();
 		StringBuffer sb = new StringBuffer();
-		if (classpathContainer.isEnabled()) {
+		if (classpathContainer.isEnabled()!= null && classpathContainer.isEnabled() == true) {
 			sb.append(classpathContainer.getRealPath(project));
 			boolean first = sb.length()==0;
 			for(IJDTClasspathContainer child: classpathContainer.getChildren()) {
@@ -42,7 +42,9 @@ public class PythonPathContributor implements IPythonPathContributor {
 		if (javaProject != null) {
 			RootContainer root = RootContainer.getRoot(project);
 			root.update();
-			return makePaths(root, javaProject).toString();
+			String paths = makePaths(root, javaProject).toString();
+			System.out.println("PyJDT path:"+paths);
+			return paths;
 		}
 		return null;
 	}
