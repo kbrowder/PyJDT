@@ -7,28 +7,31 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-
-public class CPEContainerContainer extends AbstractContainer implements IJDTClasspathContainer {
+public class CPEContainerContainer extends AbstractContainer implements
+		IJDTClasspathContainer {
 
 	@Override
-	public IJDTClasspathContainer updateChild(IClasspathEntry child, IProject project) {
-		IJDTClasspathContainer icp = super.updateChild(child, project);
+	public void update(IClasspathEntry classpathEntry, IProject project) {
+		super.update(classpathEntry, project);
 		IJavaProject javaProject = JavaCore.create(project);
+		System.out.println("ClasspathContainer" + this);
 		try {
-			IClasspathContainer classpathContainer = JavaCore.getClasspathContainer(child.getPath(), javaProject);
-			for(IClasspathEntry containerChild:classpathContainer.getClasspathEntries()) {
-				icp.updateChild(containerChild, project);
+			IClasspathContainer classpathContainer = JavaCore
+					.getClasspathContainer(classpathEntry.getPath(),
+							javaProject);
+			for (IClasspathEntry containerChild : classpathContainer
+					.getClasspathEntries()) {
+				System.out.println("ClasspathContainer: " + containerChild);
+				this.updateChild(containerChild, project).update(containerChild, project);
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		return icp;
 	}
 
 	@Override
 	public String getRealPath(IProject project) {
 		return "";
 	}
-	
 
 }

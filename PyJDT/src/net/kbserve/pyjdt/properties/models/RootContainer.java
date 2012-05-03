@@ -76,13 +76,16 @@ public class RootContainer extends AbstractContainer {
 		return rc;
 	}
 
+	public synchronized void update(IClasspathEntry classpathEntry) {
+		this.update();
+	}
 	public synchronized void update() {
 		IProject project = reverseRoots.get(this);
 		IJavaProject javaProject = JavaCore.create(project);
 
 		try {
 			for (IClasspathEntry icp : javaProject.getRawClasspath()) {
-				this.updateChild(icp, project);
+				this.updateChild(icp, project).update(icp, project);
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();

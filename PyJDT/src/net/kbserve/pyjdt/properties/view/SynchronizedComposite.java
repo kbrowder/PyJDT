@@ -37,6 +37,10 @@ public class SynchronizedComposite extends Composite {
 	public void setSelection(boolean selected) {
 		syncCheckbox.setSelection(selected);
 	}
+	
+	public void setGrayed(boolean grayed) {
+		syncCheckbox.setGrayed(grayed);
+	}
 
 	public void addSelectionListener(SelectionListener listener) {
 		syncCheckbox.addSelectionListener(listener);
@@ -45,7 +49,11 @@ public class SynchronizedComposite extends Composite {
 	public boolean getSelection() {
 		return syncCheckbox.getSelection();
 	}
-
+	
+	public boolean getGrayed() {
+		return syncCheckbox.getGrayed();
+	}
+	
 	public void removeSelectionListener(SelectionListener listener) {
 		syncCheckbox.removeSelectionListener(listener);
 	}
@@ -53,8 +61,8 @@ public class SynchronizedComposite extends Composite {
 	@Override
 	public void pack(boolean changed) {
 		RootContainer root = RootContainer.getRoot(project);
-		boolean enabled = root.getEnabled() != null && root.getEnabled().booleanValue();
-		this.setSelection(enabled);//TODO: tri-state checkbox
+		this.setSelection(root.isEnabled());
+		this.setGrayed(root.isNoPreference());
 		syncCheckbox.pack(changed);
 		super.pack(changed);
 	}

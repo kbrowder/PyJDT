@@ -28,7 +28,8 @@ public class PropertyComposite extends Composite {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				RootContainer root = RootContainer.getRoot(project);
-				root.setEnabled((syncCheckbox).getSelection());
+				root.setEnabled(syncCheckbox.getSelection());
+				root.setNoPrefererence(syncCheckbox.getGrayed());
 
 				pack(true);
 			}
@@ -40,9 +41,8 @@ public class PropertyComposite extends Composite {
 		});
 		libsTbl = new LibraryTableComposite(this, SWT.NONE, project);
 		RootContainer root = RootContainer.getRoot(project);
-		boolean enabled = root.getEnabled() != null && root.getEnabled().booleanValue();
-		//TODO: tri-state checkbox
-		syncCheckbox.setSelection(enabled);
+		syncCheckbox.setSelection(root.isEnabled());
+		syncCheckbox.setGrayed(root.isNoPreference());
 	}
 
 	public boolean getSelection() {

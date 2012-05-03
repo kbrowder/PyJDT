@@ -33,6 +33,6 @@ public class CPEProjectContainer extends AbstractContainer implements
 			value = cpe.getPath();
 		}
 
-		return makeStringPath(value.makeAbsolute());
+		return makeStringPath(prependWorkspaceLoc(value).makeAbsolute());
 	}
 }

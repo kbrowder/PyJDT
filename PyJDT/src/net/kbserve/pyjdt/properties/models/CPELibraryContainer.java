@@ -8,8 +8,8 @@ public class CPELibraryContainer extends AbstractContainer implements IJDTClassp
 
 	@Override
 	public String getRealPath(IProject project) {
-		IClasspathEntry cpe = getClasspath(project);
-		return makeStringPath(prependWorkspaceLoc(cpe.getPath()).makeAbsolute());
+		//TODO: what we should do is get the parent path
+		return getPath();//CPE_LIBRARY is always the abspath
 	}
 	
 

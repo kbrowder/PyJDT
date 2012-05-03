@@ -28,10 +28,12 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return value;
 	}
 
-	private Boolean enabled = null;
+	private boolean enabled = true;
 	private List<IJDTClasspathContainer> children = new ArrayList<IJDTClasspathContainer>();
 
 	private String path = null;
+	private String parentPath = null;
+	private boolean noPreference = true;
 
 	public IJDTClasspathContainer getChild(String path) {
 		for (IJDTClasspathContainer child : children) {
@@ -61,6 +63,11 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return null;
 	}
 
+	@Override
+	public String getParent() {
+		return this.parentPath;
+	}
+
 	public String getPath() {
 		return path;
 	}
@@ -74,8 +81,16 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return false;
 	}
 
-	public Boolean getEnabled() {
+	public boolean isEnabled() {
 		return this.enabled;
+	}
+
+	/**
+	 * True if the user has expressed no preference as to the enabled state
+	 */
+	@Override
+	public boolean isNoPreference() {
+		return this.noPreference;
 	}
 
 	@Override
@@ -85,8 +100,19 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 
 	}
 
-	public void setEnabled(Boolean enabled) {
+	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Override
+	public void setNoPrefererence(boolean prefered) {
+		this.noPreference = false;
+
+	}
+
+	@Override
+	public void setParent(String parentPath) {
+		this.parentPath = parentPath;
 	}
 
 	public void setPath(String path) {
@@ -94,7 +120,11 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 
 	}
 
+	/** Class that allows implementation of how classes get updated **/
 	@Override
+	public void update(IClasspathEntry classpathEntry, IProject project) {
+	}
+
 	public synchronized IJDTClasspathContainer updateChild(
 			IClasspathEntry child, IProject project) {
 
@@ -123,9 +153,11 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 								+ child.getEntryKind() + "' on " + child);
 			}
 			children.add(icp);
+			icp.setPath(stringPath);
+			icp.setParent(this.getPath());
 		}
-		icp.setPath(stringPath);
-		return icp;
 
+		return icp;
 	}
+
 }
