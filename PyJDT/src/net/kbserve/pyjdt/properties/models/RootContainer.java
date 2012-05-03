@@ -129,4 +129,8 @@ public class RootContainer extends AbstractContainer {
 		}
 
 	}
+	@Override
+	public String toString() {
+		return "Project";
+	}
 }

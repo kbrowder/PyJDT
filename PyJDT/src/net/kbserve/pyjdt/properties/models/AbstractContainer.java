@@ -160,4 +160,8 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return icp;
 	}
 
+	@Override
+	public String toString() {
+		return getPath();
+	}
 }

@@ -10,6 +10,8 @@ import org.eclipse.jdt.core.JavaModelException;
 public class CPEContainerContainer extends AbstractContainer implements
 		IJDTClasspathContainer {
 
+	private String description = null;
+
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 		super.update(classpathEntry, project);
@@ -19,6 +21,7 @@ public class CPEContainerContainer extends AbstractContainer implements
 			IClasspathContainer classpathContainer = JavaCore
 					.getClasspathContainer(classpathEntry.getPath(),
 							javaProject);
+			setDescription(classpathContainer.getDescription());
 			for (IClasspathEntry containerChild : classpathContainer
 					.getClasspathEntries()) {
 				System.out.println("ClasspathContainer: " + containerChild);
@@ -33,5 +36,20 @@ public class CPEContainerContainer extends AbstractContainer implements
 	public String getRealPath(IProject project) {
 		return "";
 	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getDescription() {
+		return this.description;
+	}
+	@Override
+	public String toString() {
+		if(description != null) {
+			return getDescription();
+		}
+		return super.toString();
+	}
+	 
 
 }

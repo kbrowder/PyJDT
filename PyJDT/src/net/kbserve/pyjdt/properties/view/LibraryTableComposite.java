@@ -5,7 +5,6 @@ import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -21,18 +20,13 @@ public class LibraryTableComposite extends Composite {
 
 	public LibraryTableComposite(Composite parent, int style, IProject project) {
 		super(parent, style);
-		GridLayout layout = new GridLayout(1, true);
-		setLayout(layout);
-
+		setLayout(new GridLayout(1, true));
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
 		table = new Tree(this, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL
 				| SWT.H_SCROLL);
-		// table.setHeaderVisible(true);
-		// TreeColumn tc = new TreeColumn(table, SWT.NONE);
-		// tc.setWidth(400);
-		// tc.setText("Libraries");
-		table.setLayout(new FillLayout());
+
+		table.setLayout(new GridLayout(1, true));
+		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		this.project = project;
 	}
 
@@ -42,62 +36,59 @@ public class LibraryTableComposite extends Composite {
 
 	@Override
 	public void pack(boolean changed) {
-		RootContainer root = RootContainer.getRoot(project);
-		root.update();
-		table.clearAll(true);
-		table.setItemCount(0);
+		if (changed) {
+			RootContainer root = RootContainer.getRoot(project);
+			root.update();
+			table.clearAll(true);
+			table.setItemCount(0);
 
-		table.addListener(SWT.Expand, new Listener() {
+			table.addListener(SWT.Selection, new Listener() {
 
-			@Override
-			public void handleEvent(Event arg0) {
-				System.out.println("SetData: " + arg0);
-
-			}
-		});
-
-		table.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(Event arg0) {
-				if (arg0.detail == SWT.CHECK) {
-					System.out.println("Selection: " + arg0.item);
-					try {
-						TreeItem tree = (TreeItem) arg0.item;
-						IJDTClasspathContainer cpc = (IJDTClasspathContainer) tree.getData();
-						cpc.setEnabled(tree.getChecked());
-						cpc.setNoPrefererence(tree.getGrayed());
-						tree.setExpanded(false);
-					} catch (ClassCastException e) {
+				@Override
+				public void handleEvent(Event arg0) {
+					if (arg0.detail == SWT.CHECK) {
+						System.out.println("Selection: " + arg0.item);
+						try {
+							TreeItem tree = (TreeItem) arg0.item;
+							IJDTClasspathContainer cpc = (IJDTClasspathContainer) tree
+									.getData();
+							cpc.setEnabled(tree.getChecked());
+							cpc.setNoPrefererence(tree.getGrayed());
+							tree.setExpanded(false);
+						} catch (ClassCastException e) {
+						}
 					}
+
 				}
+			});
 
-			}
-		});
+			setupClasspathInfo(table, root);
 
-		for (IJDTClasspathContainer child : root.getChildren()) {
-			setupClasspathInfo(table, child);
+			boolean enabled = root.isNoPreference() || root.isEnabled();
+			table.setEnabled(enabled);
 		}
-
-		boolean enabled = root.isNoPreference() || root.isEnabled();
-		table.setEnabled(enabled);
 		table.pack(changed);
 		super.pack(changed);
 	}
 
 	private void setupClasspathInfo(Tree tree, IJDTClasspathContainer cp) {
 		TreeItem ti = new TreeItem(tree, SWT.NONE);
-		ti.setText(cp.getPath());
-		ti.setChecked(cp.isEnabled());
-		ti.setGrayed(cp.isNoPreference());
-		ti.setData(cp);
+		setUpTreeItem(cp, ti);
 		for (IJDTClasspathContainer child : cp.getChildren()) {
 			setupClasspathInfo(ti, child);
 		}
 	}
+
 	private void setupClasspathInfo(TreeItem treeItem, IJDTClasspathContainer cp) {
 		TreeItem ti = new TreeItem(treeItem, SWT.NONE);
-		ti.setText(cp.getPath());
+		setUpTreeItem(cp, ti);
+		for (IJDTClasspathContainer child : cp.getChildren()) {
+			setupClasspathInfo(ti, child);
+		}
+	}
+
+	private void setUpTreeItem(IJDTClasspathContainer cp, TreeItem ti) {
+		ti.setText(cp.toString());
 		ti.setChecked(cp.isEnabled());
 		ti.setGrayed(cp.isNoPreference());
 		ti.setData(cp);
