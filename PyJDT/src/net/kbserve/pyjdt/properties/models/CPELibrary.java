@@ -1,14 +1,13 @@
 package net.kbserve.pyjdt.properties.models;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jdt.core.IClasspathEntry;
 
 
-public class CPELibraryContainer extends AbstractContainer implements IJDTClasspathContainer {
+public class CPELibrary extends CPEAbstractContainer implements ICPEType {
 
 	@Override
 	public String getRealPath(IProject project) {
-		//TODO: what we should do is get the parent path
+		//TODO: what we should do is get the parent path and check if we're relative I thinks.
 		return getPath();//CPE_LIBRARY is always the abspath
 	}
 	

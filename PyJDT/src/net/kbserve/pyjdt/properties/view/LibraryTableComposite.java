@@ -1,22 +1,54 @@
 package net.kbserve.pyjdt.properties.view;
 
-import net.kbserve.pyjdt.properties.models.IJDTClasspathContainer;
+import net.kbserve.pyjdt.properties.models.ICPEType;
 import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
 public class LibraryTableComposite extends Composite {
 
+	private final class TableSelectionListener implements SelectionListener {
+		@Override
+		public void widgetSelected(SelectionEvent arg0) {
+			System.out.println("Selection: " + arg0.item);
+			try {
+				TreeItem tree = (TreeItem) arg0.item;
+				ICPEType cpc = (ICPEType) tree.getData();
+				cpc.setEnabled(tree.getChecked());
+				if (!tree.getChecked()) {
+					TreeItem parentItem = tree.getParentItem();
+					if (parentItem.getChecked()) {
+						parentItem.setGrayed(true);
+					}
+				}
+
+				for (TreeItem child : tree.getItems()) {
+					ICPEType childClasspathContainer = (ICPEType) child
+							.getData();
+					child.setChecked(childClasspathContainer
+							.isEnabled());
+				}
+			} catch (ClassCastException e) {
+			}
+
+		}
+
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+		}
+	}
+
 	private IProject project;
 	private Tree table;
+	private TableSelectionListener tableSelectionListener;
 
 	public LibraryTableComposite(Composite parent, int style, IProject project) {
 		super(parent, style);
@@ -41,57 +73,40 @@ public class LibraryTableComposite extends Composite {
 			root.update();
 			table.clearAll(true);
 			table.setItemCount(0);
-
-			table.addListener(SWT.Selection, new Listener() {
-
-				@Override
-				public void handleEvent(Event arg0) {
-					if (arg0.detail == SWT.CHECK) {
-						System.out.println("Selection: " + arg0.item);
-						try {
-							TreeItem tree = (TreeItem) arg0.item;
-							IJDTClasspathContainer cpc = (IJDTClasspathContainer) tree
-									.getData();
-							cpc.setEnabled(tree.getChecked());
-							cpc.setNoPrefererence(tree.getGrayed());
-							tree.setExpanded(false);
-						} catch (ClassCastException e) {
-						}
-					}
-
-				}
-			});
-
 			setupClasspathInfo(table, root);
-
-			boolean enabled = root.isNoPreference() || root.isEnabled();
-			table.setEnabled(enabled);
+			if(tableSelectionListener==null) {
+				tableSelectionListener = new TableSelectionListener();
+				table.addSelectionListener(tableSelectionListener);
+			}
 		}
 		table.pack(changed);
 		super.pack(changed);
 	}
 
-	private void setupClasspathInfo(Tree tree, IJDTClasspathContainer cp) {
-		TreeItem ti = new TreeItem(tree, SWT.NONE);
-		setUpTreeItem(cp, ti);
-		for (IJDTClasspathContainer child : cp.getChildren()) {
-			setupClasspathInfo(ti, child);
+	private void setupClasspathInfo(Tree tree, ICPEType cp) {
+		if (cp.isAvailable()) {
+			TreeItem ti = new TreeItem(tree, SWT.NONE);
+			setUpTreeItem(cp, ti);
+			for (ICPEType child : cp.getChildren()) {
+				setupClasspathInfo(ti, child);
+			}
 		}
 	}
 
-	private void setupClasspathInfo(TreeItem treeItem, IJDTClasspathContainer cp) {
-		TreeItem ti = new TreeItem(treeItem, SWT.NONE);
-		setUpTreeItem(cp, ti);
-		for (IJDTClasspathContainer child : cp.getChildren()) {
-			setupClasspathInfo(ti, child);
+	private void setupClasspathInfo(TreeItem treeItem, ICPEType cp) {
+		if (cp.isAvailable()) {
+			TreeItem ti = new TreeItem(treeItem, SWT.NONE);
+			setUpTreeItem(cp, ti);
+			for (ICPEType child : cp.getChildren()) {
+				setupClasspathInfo(ti, child);
+			}
 		}
 	}
 
-	private void setUpTreeItem(IJDTClasspathContainer cp, TreeItem ti) {
-		ti.setText(cp.toString());
-		ti.setChecked(cp.isEnabled());
-		ti.setGrayed(cp.isNoPreference());
-		ti.setData(cp);
+	private void setUpTreeItem(ICPEType cp, TreeItem checked) {
+		checked.setText(cp.toString());
+		checked.setChecked(cp.isEnabled());
+		checked.setData(cp);
 	}
 
 }

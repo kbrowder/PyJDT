@@ -3,7 +3,7 @@ package net.kbserve.pyjdt.properties.models;
 import org.eclipse.core.resources.IProject;
 
 
-public class CPEVariableContainer extends AbstractContainer implements IJDTClasspathContainer {
+public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 
 	@Override
 	public String getRealPath(IProject project) {

@@ -1,6 +1,6 @@
 package net.kbserve.pyjdt;
 
-import net.kbserve.pyjdt.properties.models.IJDTClasspathContainer;
+import net.kbserve.pyjdt.properties.models.ICPEType;
 import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
@@ -11,16 +11,15 @@ import org.python.pydev.plugin.nature.IPythonPathContributor;
 
 public class PythonPathContributor implements IPythonPathContributor {
 
-	protected StringBuffer makePaths(IJDTClasspathContainer classpathContainer,
+	protected StringBuffer makePaths(ICPEType classpathContainer,
 			IJavaProject javaProject) {
 		IProject project = javaProject.getProject();
 		StringBuffer sb = new StringBuffer();
 		System.out.println("Making path for:" + classpathContainer.getPath());
-		if ( classpathContainer.isNoPreference() || classpathContainer.isEnabled()) {
+		if (classpathContainer.isEnabled()) {
 			sb.append(classpathContainer.getRealPath(project));
 			boolean first = sb.length() == 0;
-			for (IJDTClasspathContainer child : classpathContainer
-					.getChildren()) {
+			for (ICPEType child : classpathContainer.getChildren()) {
 				StringBuffer childStringBuffer = makePaths(child, javaProject);
 				if (first == false) {
 					if (childStringBuffer.length() > 0) {

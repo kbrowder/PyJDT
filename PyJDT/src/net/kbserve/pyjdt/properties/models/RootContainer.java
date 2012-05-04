@@ -1,5 +1,6 @@
 package net.kbserve.pyjdt.properties.models;
 
+import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedInputStream;
@@ -20,12 +21,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class RootContainer extends AbstractContainer {
+public class RootContainer extends CPEAbstractContainer {
 	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
 	private static final Map<RootContainer, IProject> reverseRoots = new HashMap<RootContainer, IProject>();
 
@@ -57,21 +59,38 @@ public class RootContainer extends AbstractContainer {
 	public static synchronized RootContainer getRoot(IProject project) {
 		RootContainer rc = roots.get(project);
 		if (rc == null) {
+			NullProgressMonitor npm = new NullProgressMonitor();
+			npm.beginTask("Loading PyJDT data for " + project.getName(), 100);
 			File libxml = getLibrariesXml(project).getFullPath().toFile();
 			if (libxml.exists()) {
+				npm.subTask("Attempting to load: " + libxml.getAbsolutePath());
+				npm.internalWorked(5);
 				try {
 					XMLDecoder d = new XMLDecoder(new BufferedInputStream(
 							new FileInputStream(libxml)));
+					d.setExceptionListener(new ExceptionListener() {
+
+						@Override
+						public void exceptionThrown(Exception e) {
+							e.printStackTrace();
+						}
+					});
 					rc = (RootContainer) d.readObject();
+					npm.internalWorked(85);
 				} catch (Exception e) {
 				}
+				
+				
 			}
 			if (rc == null) {
 				rc = new RootContainer();
+				npm.internalWorked(65);
 			}
+			
 			reverseRoots.put(rc, project);
 			roots.put(project, rc);
 			rc.update();
+			npm.done();
 		}
 		return rc;
 	}
@@ -79,6 +98,7 @@ public class RootContainer extends AbstractContainer {
 	public synchronized void update(IClasspathEntry classpathEntry) {
 		this.update();
 	}
+
 	public synchronized void update() {
 		IProject project = reverseRoots.get(this);
 		IJavaProject javaProject = JavaCore.create(project);
@@ -91,18 +111,19 @@ public class RootContainer extends AbstractContainer {
 			e.printStackTrace();
 		}
 	}
+
 	@Override
 	public String getRealPath(IProject project) {
-		//TODO: What about the source path?
+		// TODO: What about the source path?
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
-			return makeStringPath(prependWorkspaceLoc(javaProject.getOutputLocation())
-					.makeAbsolute());
+			return makeStringPath(prependWorkspaceLoc(
+					javaProject.getOutputLocation()).makeAbsolute());
 		} catch (JavaModelException e) {
 			throw new RuntimeException(e);
-		}	
+		}
 	}
-	
+
 	public static synchronized RootContainer revert(IProject project) {
 		reverseRoots.remove(roots.remove(project));
 		return getRoot(project);
@@ -129,6 +150,7 @@ public class RootContainer extends AbstractContainer {
 		}
 
 	}
+
 	@Override
 	public String toString() {
 		return "Project";

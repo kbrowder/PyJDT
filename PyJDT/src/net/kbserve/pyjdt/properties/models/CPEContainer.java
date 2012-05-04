@@ -7,8 +7,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class CPEContainerContainer extends AbstractContainer implements
-		IJDTClasspathContainer {
+public class CPEContainer extends CPEAbstractContainer implements
+		ICPEType {
 
 	private String description = null;
 
@@ -16,16 +16,20 @@ public class CPEContainerContainer extends AbstractContainer implements
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 		super.update(classpathEntry, project);
 		IJavaProject javaProject = JavaCore.create(project);
-		System.out.println("ClasspathContainer" + this);
 		try {
 			IClasspathContainer classpathContainer = JavaCore
 					.getClasspathContainer(classpathEntry.getPath(),
 							javaProject);
 			setDescription(classpathContainer.getDescription());
+			setAvailable(true);
+			for(ICPEType child: getChildren()) {
+				child.setAvailable(false);
+			}
 			for (IClasspathEntry containerChild : classpathContainer
 					.getClasspathEntries()) {
-				System.out.println("ClasspathContainer: " + containerChild);
-				this.updateChild(containerChild, project).update(containerChild, project);
+				ICPEType child = this.updateChild(containerChild, project);
+				child.setAvailable(true);
+				child.update(containerChild, project);
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();

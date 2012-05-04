@@ -12,7 +12,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public abstract class AbstractContainer implements IJDTClasspathContainer {
+public abstract class CPEAbstractContainer implements ICPEType {
 	public static String makeStringPath(IClasspathEntry classpathEntry) {
 		return makeStringPath(classpathEntry.getPath());
 	}
@@ -29,23 +29,23 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 	}
 
 	private boolean enabled = true;
-	private List<IJDTClasspathContainer> children = new ArrayList<IJDTClasspathContainer>();
+	private List<ICPEType> children = new ArrayList<ICPEType>();
 
 	private String path = null;
 	private String parentPath = null;
-	private boolean noPreference = true;
+	private boolean available = true;
 
-	public IJDTClasspathContainer getChild(String path) {
-		for (IJDTClasspathContainer child : children) {
-			if (child.getPath().equals(path)) {
+	public ICPEType getChild(String path) {
+		for (ICPEType child : children) {
+			if (child!=null && child.getPath().equals(path)) {
 				return child;
 			}
 		}
 		return null;
 	}
-
-	public Collection<IJDTClasspathContainer> getChildren() {
-		return new ArrayList<IJDTClasspathContainer>(children);
+	
+	public Collection<ICPEType> getChildren() {
+		return new ArrayList<ICPEType>(children);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 	}
 
 	public boolean hasChild(String path) {
-		for (IJDTClasspathContainer child : children) {
+		for (ICPEType child : children) {
 			if (child.getPath().equals(path)) {
 				return true;
 			}
@@ -81,20 +81,34 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		return false;
 	}
 
+	@Override
+	public boolean isAvailable() {
+		return this.available;
+	}
+
 	public boolean isEnabled() {
 		return this.enabled;
 	}
 
-	/**
-	 * True if the user has expressed no preference as to the enabled state
-	 */
-	@Override
-	public boolean isNoPreference() {
-		return this.noPreference;
+
+	protected boolean removeChild(ICPEType child) {
+		return children.remove(child);
 	}
 
 	@Override
-	public void setChildren(Collection<IJDTClasspathContainer> children) {
+	public void setAvailable(boolean available) {
+		this.available = available;
+		if(!available) {
+			for(ICPEType child: getChildren()) {
+				child.setAvailable(available);
+			}
+		}
+		
+	}
+
+
+	@Override
+	public void setChildren(Collection<ICPEType> children) {
 		this.children.clear();
 		this.children.addAll(children);
 
@@ -102,12 +116,9 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	@Override
-	public void setNoPrefererence(boolean prefered) {
-		this.noPreference = false;
-
+		for(ICPEType cpeType:getChildren()) {
+			cpeType.setEnabled(true);
+		}
 	}
 
 	@Override
@@ -120,32 +131,35 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 
 	}
 
+	@Override
+	public String toString() {
+		return getPath();
+	}
 	/** Class that allows implementation of how classes get updated **/
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 	}
-
-	public synchronized IJDTClasspathContainer updateChild(
+	public synchronized ICPEType updateChild(
 			IClasspathEntry child, IProject project) {
 
 		String stringPath = makeStringPath(child);
-		IJDTClasspathContainer icp = getChild(stringPath);
+		ICPEType icp = getChild(stringPath);
 		if (icp == null) {
 			switch (child.getEntryKind()) {
 			case (IClasspathEntry.CPE_CONTAINER):
-				icp = new CPEContainerContainer();
+				icp = new CPEContainer();
 				break;
 			case (IClasspathEntry.CPE_LIBRARY):
-				icp = new CPELibraryContainer();
+				icp = new CPELibrary();
 				break;
 			case (IClasspathEntry.CPE_PROJECT):
-				icp = new CPEProjectContainer();
+				icp = new CPEProject();
 				break;
 			case (IClasspathEntry.CPE_SOURCE):
-				icp = new CPESourceContainer();
+				icp = new CPESource();
 				break;
 			case (IClasspathEntry.CPE_VARIABLE):
-				icp = new CPEVariableContainer();
+				icp = new CPEVariable();
 				break;
 			default:
 				throw new UnsupportedOperationException(
@@ -158,10 +172,5 @@ public abstract class AbstractContainer implements IJDTClasspathContainer {
 		}
 
 		return icp;
-	}
-
-	@Override
-	public String toString() {
-		return getPath();
 	}
 }

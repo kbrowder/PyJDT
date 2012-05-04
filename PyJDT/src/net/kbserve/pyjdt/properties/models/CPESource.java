@@ -8,8 +8,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class CPESourceContainer extends AbstractContainer implements
-		IJDTClasspathContainer {
+public class CPESource extends CPEAbstractContainer implements
+		ICPEType {
 
 	@Override
 	public String getRealPath(IProject project) {
