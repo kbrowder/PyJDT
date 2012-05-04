@@ -13,11 +13,11 @@ public class CPELibrary extends CPEAbstractContainer implements ICPEType {
 		String realPath = getPath();
 		IPath realIPath = new Path(realPath);
 		IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
-		IProject origProj = workspaceRoot
-				.getProject(realIPath.segment(0));
+		IProject origProj = workspaceRoot.getProject(realIPath.segment(0));
 		if (origProj.isAccessible()) {// path is relative to the workspace.
 			IPath workspacePath = workspaceRoot.getLocation().makeAbsolute();
-			return makeStringPath(workspacePath.append(realIPath).makeAbsolute());
+			return makeStringPath(workspacePath.append(realIPath)
+					.makeAbsolute());
 		}
 		return realPath;
 	}
