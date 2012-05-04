@@ -7,6 +7,7 @@ public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 
 	@Override
 	public String getRealPath(IProject project) {
+		//TODO: implement me
 		throw new UnsupportedOperationException("Variable containers are not yet supported"); 
 	}
 
