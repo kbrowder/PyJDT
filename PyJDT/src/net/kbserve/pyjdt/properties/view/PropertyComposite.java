@@ -24,9 +24,11 @@ public class PropertyComposite extends Composite {
 
 	@Override
 	public void pack(boolean changed) {
-		getParent().layout(changed, true);
-		super.pack(changed);
 		libsTbl.pack(changed);
+		super.pack(changed);
+		getParent().layout(changed, true);
+		
+		
 	}
 
 }

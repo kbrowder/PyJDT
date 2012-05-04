@@ -73,11 +73,11 @@ public class LibraryTableComposite extends Composite {
 			root.update();
 			table.clearAll(true);
 			table.setItemCount(0);
-			setupClasspathInfo(table, root);
 			if(tableSelectionListener==null) {
 				tableSelectionListener = new TableSelectionListener();
 				table.addSelectionListener(tableSelectionListener);
 			}
+			setupClasspathInfo(table, root);
 		}
 		table.pack(changed);
 		super.pack(changed);

@@ -34,7 +34,7 @@ public class PyJDTProps extends PropertyPage {
 	protected void performDefaults() {
 		super.performDefaults();
 		RootContainer.revert(getElement());
-		propertyComposite.pack();
+		propertyComposite.pack(true);
 	}
 
 	@Override
