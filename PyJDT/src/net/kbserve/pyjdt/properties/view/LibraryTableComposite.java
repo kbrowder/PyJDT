@@ -18,31 +18,68 @@ public class LibraryTableComposite extends Composite {
 	private final class TableSelectionListener implements SelectionListener {
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
-			System.out.println("Selection: " + arg0.item);
-			try {
-				TreeItem tree = (TreeItem) arg0.item;
-				ICPEType cpc = (ICPEType) tree.getData();
-				cpc.setEnabled(tree.getChecked());
-				if (!tree.getChecked()) {
-					TreeItem parentItem = tree.getParentItem();
-					if (parentItem.getChecked()) {
-						parentItem.setGrayed(true);
-					}
-				}
+			if ((arg0.detail & SWT.CHECK) == SWT.CHECK) {
+				try {
 
-				for (TreeItem child : tree.getItems()) {
-					ICPEType childClasspathContainer = (ICPEType) child
-							.getData();
-					child.setChecked(childClasspathContainer
-							.isEnabled());
+					TreeItem tree = (TreeItem) arg0.item;
+					ICPEType cpc = (ICPEType) tree.getData();
+					cpc.setEnabled(tree.getChecked());
+					System.out.println("Selection: " + arg0.item + " -> "
+							+ cpc.isEnabled());
+					TreeItem parentItem = tree.getParentItem();
+					if (!tree.getChecked()) {
+						if (parentItem.getChecked()) {
+							parentItem.setGrayed(true);
+						} else {
+
+						}
+					} else {
+						tree.setGrayed(false);
+					}
+					updateAll(tree, tree.getChecked());
+					makeChecksConsistentWithChildren();
+				} catch (ClassCastException e) {
+					e.printStackTrace();
 				}
-			} catch (ClassCastException e) {
 			}
 
 		}
 
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
+		}
+	}
+
+	protected void updateAll(TreeItem parent, boolean checked) {
+		for (TreeItem child : parent.getItems()) {
+			child.setChecked(checked);
+			child.setGrayed(false);
+			updateAll(child, checked);
+		}
+	}
+
+	/**
+	 * 
+	 * @param child
+	 * @return null if checkbox should be gray, true if checked, false if
+	 *         unchecked
+	 */
+	private Boolean makeChecksConsistentWithChildren(TreeItem item) {
+		Boolean ret = item.getChecked();
+		for (TreeItem child : item.getItems()) {
+			Boolean current = makeChecksConsistentWithChildren(child);
+			if (current != ret) {
+				ret = null;
+			}
+		}
+		item.setChecked(!Boolean.FALSE.equals(ret));
+		item.setGrayed(ret == null);
+		return ret;
+	}
+	
+	private void makeChecksConsistentWithChildren() {
+		for(TreeItem item: table.getItems()) {
+			makeChecksConsistentWithChildren(item);
 		}
 	}
 
@@ -73,34 +110,58 @@ public class LibraryTableComposite extends Composite {
 			root.update();
 			table.clearAll(true);
 			table.setItemCount(0);
-			if(tableSelectionListener==null) {
+			if (tableSelectionListener != null) {
+				table.removeSelectionListener(tableSelectionListener);
+			}
+			setupClasspathInfo(table, root);
+			makeChecksConsistentWithChildren();
+			expandAll(table.getItems());
+			if (tableSelectionListener == null) {
 				tableSelectionListener = new TableSelectionListener();
 				table.addSelectionListener(tableSelectionListener);
 			}
-			setupClasspathInfo(table, root);
 		}
 		table.pack(changed);
 		super.pack(changed);
 	}
 
-	private void setupClasspathInfo(Tree tree, ICPEType cp) {
+	private void expandAll(TreeItem[] items) {
+		for (TreeItem ti : items) {
+			ti.setExpanded(true);
+			expandAll(ti.getItems());
+		}
+
+	}
+
+	private TreeItem setupClasspathInfo(Tree tree, ICPEType cp) {
 		if (cp.isAvailable()) {
 			TreeItem ti = new TreeItem(tree, SWT.NONE);
 			setUpTreeItem(cp, ti);
-			for (ICPEType child : cp.getChildren()) {
-				setupClasspathInfo(ti, child);
-			}
+			return populateChildren(cp, ti);
 		}
+		return null;
 	}
 
-	private void setupClasspathInfo(TreeItem treeItem, ICPEType cp) {
+	private TreeItem setupClasspathInfo(TreeItem treeItem, ICPEType cp) {
 		if (cp.isAvailable()) {
 			TreeItem ti = new TreeItem(treeItem, SWT.NONE);
 			setUpTreeItem(cp, ti);
-			for (ICPEType child : cp.getChildren()) {
-				setupClasspathInfo(ti, child);
+			return populateChildren(cp, ti);
+		}
+		return null;
+	}
+
+	private TreeItem populateChildren(ICPEType parentClasspath,
+			TreeItem parentTreeItem) {
+		for (ICPEType child : parentClasspath.getChildren()) {
+			setupClasspathInfo(parentTreeItem, child);
+			if (!parentClasspath.isEnabled() && child.isEnabled()) {
+				parentTreeItem.setGrayed(true);
+			} else if (parentClasspath.isEnabled() && !child.isEnabled()) {
+				parentTreeItem.setGrayed(true);
 			}
 		}
+		return parentTreeItem;
 	}
 
 	private void setUpTreeItem(ICPEType cp, TreeItem checked) {

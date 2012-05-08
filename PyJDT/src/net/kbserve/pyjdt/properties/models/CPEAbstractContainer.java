@@ -116,9 +116,6 @@ public abstract class CPEAbstractContainer implements ICPEType {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-		for(ICPEType cpeType:getChildren()) {
-			cpeType.setEnabled(true);
-		}
 	}
 
 	@Override

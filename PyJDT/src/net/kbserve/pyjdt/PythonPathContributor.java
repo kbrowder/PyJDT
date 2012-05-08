@@ -15,7 +15,6 @@ public class PythonPathContributor implements IPythonPathContributor {
 			IJavaProject javaProject) {
 		IProject project = javaProject.getProject();
 		StringBuffer sb = new StringBuffer();
-		System.out.println("Making path for:" + classpathContainer.getPath());
 		if (classpathContainer.isEnabled()) {
 			sb.append(classpathContainer.getRealPath(project));
 			boolean first = sb.length() == 0;

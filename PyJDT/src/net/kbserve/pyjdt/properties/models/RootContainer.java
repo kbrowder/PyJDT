@@ -15,7 +15,6 @@ import java.util.Map;
 
 import net.kbserve.pyjdt.Activator;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -31,9 +30,9 @@ public class RootContainer extends CPEAbstractContainer {
 	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
 	private static final Map<RootContainer, IProject> reverseRoots = new HashMap<RootContainer, IProject>();
 
-	protected static IFile getLibrariesXml(IProject project) {
-		return getWorkingLocation(project).getFile(
-				Activator.PLUGIN_ID + ".root.prefs");
+	protected static IPath getLibrariesXml(IProject project) {
+		return prependWorkspaceLoc(getWorkingLocation(project).getFile(
+				Activator.PLUGIN_ID + ".root.prefs").getFullPath());
 	};
 
 	protected static IFolder getWorkingLocation(IProject project) {
@@ -61,8 +60,9 @@ public class RootContainer extends CPEAbstractContainer {
 		if (rc == null) {
 			NullProgressMonitor npm = new NullProgressMonitor();
 			npm.beginTask("Loading PyJDT data for " + project.getName(), 100);
-			File libxml = getLibrariesXml(project).getFullPath().toFile();
+			File libxml = getLibrariesXml(project).toFile();
 			if (libxml.exists()) {
+				System.out.println("Loading from: " + libxml.getAbsolutePath());
 				npm.subTask("Attempting to load: " + libxml.getAbsolutePath());
 				npm.internalWorked(5);
 				try {
@@ -78,15 +78,15 @@ public class RootContainer extends CPEAbstractContainer {
 					rc = (RootContainer) d.readObject();
 					npm.internalWorked(85);
 				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				
-				
+
 			}
 			if (rc == null) {
 				rc = new RootContainer();
 				npm.internalWorked(65);
 			}
-			
+
 			reverseRoots.put(rc, project);
 			roots.put(project, rc);
 			rc.update();
@@ -125,19 +125,20 @@ public class RootContainer extends CPEAbstractContainer {
 	}
 
 	public static synchronized RootContainer revert(IProject project) {
+		System.out.println("Reverting PyJDT from " + project);
+		roots.put(project, null);
 		reverseRoots.remove(roots.remove(project));
+		assert !roots.containsKey(project);
 		return getRoot(project);
 	}
 
 	public synchronized void save() throws CoreException, FileNotFoundException {
-		IFile loc = getLibrariesXml(reverseRoots.get(this));
-		System.out.println("xml:" + loc);
-
 		try {
-			IPath path = prependWorkspaceLoc(loc.getFullPath());
+			IPath path = getLibrariesXml(reverseRoots.get(this));
+			System.out.println("xml:" + path.toOSString());
 			path.toFile().getParentFile().mkdirs();
-			if (loc.exists()) {
-				loc.delete(true, null);
+			if (path.toFile().exists()) {
+				path.toFile().delete();
 			}
 			// loc.create(pis, IResource.HIDDEN, null);//TODO: add progress
 			// monitor
