@@ -40,12 +40,9 @@ public class CPESource extends CPEAbstractContainer implements ICPEType {
 		IProject project = file.getProject();
 		if (project != null) {
 			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
-			System.out.println("file.getRawLocation:" + file.getRawLocation());
 			Image ret = workbenchLabelProvider.getImage(project.findMember(file
 					.getRawLocation()));
-			System.out.println("source:" + file.getRawLocation());
-			System.out.println("ret:" + ret);
-			if (ret != null) {
+			if (ret != null) {//TODO: fixme
 				return ret;
 			}
 		}
