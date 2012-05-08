@@ -37,9 +37,6 @@ public class PyJDTProps extends PropertyPage {
 
 	PropertyComposite propertyComposite;
 
-	/**
-	 * Constructor for SamplePropertyPage.
-	 */
 	public PyJDTProps() {
 		super();
 	}
