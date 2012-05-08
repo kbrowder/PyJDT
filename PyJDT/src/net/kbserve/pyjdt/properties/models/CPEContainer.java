@@ -32,13 +32,20 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.PlatformUI;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CPEContainer.
+ */
 public class CPEContainer extends CPEAbstractContainer implements
 		ICPEType {
 
+	/** The description. */
 	private String description = null;
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#update(org.eclipse.jdt.core.IClasspathEntry, org.eclipse.core.resources.IProject)
+	 */
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 		super.update(classpathEntry, project);
@@ -63,19 +70,35 @@ public class CPEContainer extends CPEAbstractContainer implements
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(org.eclipse.core.resources.IProject)
+	 */
 	@Override
 	public String getRealPath(IProject project) {
-		String drp = super.getRealPath(project);
-		System.out.println("Containers real path:"+ drp);
-		return "";//TODO: is this really empty
+		return "";
 	}
 	
+	/**
+	 * Sets the description.
+	 *
+	 * @param description the new description
+	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	/**
+	 * Gets the description.
+	 *
+	 * @return the description
+	 */
 	public String getDescription() {
 		return this.description;
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#toString()
+	 */
 	@Override
 	public String toString() {
 		if(description != null) {
@@ -84,6 +107,9 @@ public class CPEContainer extends CPEAbstractContainer implements
 		return super.toString();
 	}
 	 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
 	@Override
 	public Image getIcon() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);

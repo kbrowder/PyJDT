@@ -27,13 +27,25 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.Image;
+// TODO: Auto-generated Javadoc
+
+/**
+ * The Class CPEVariable.
+ */
 public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(org.eclipse.core.resources.IProject)
+	 */
 	@Override
 	public String getRealPath(IProject project) {
 		//TODO: implement me
 		throw new UnsupportedOperationException("Variable containers are not yet supported"); 
 	}
+	
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
 	@Override
 	public Image getIcon() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);

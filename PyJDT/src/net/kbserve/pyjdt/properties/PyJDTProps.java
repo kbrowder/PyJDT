@@ -33,15 +33,27 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PyJDTProps.
+ */
 public class PyJDTProps extends PropertyPage {
 
+	/** The property composite. */
 	PropertyComposite propertyComposite;
 
+	/**
+	 * Instantiates a new py jdt props.
+	 */
 	public PyJDTProps() {
 		super();
 	}
 
 	/**
+	 * Creates the contents.
+	 *
+	 * @param parent the parent
+	 * @return the control
 	 * @see PreferencePage#createContents(Composite)
 	 */
 	protected Control createContents(Composite parent) {
@@ -51,17 +63,26 @@ public class PyJDTProps extends PropertyPage {
 		return propertyComposite;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
+	 */
 	protected void performDefaults() {
 		super.performDefaults();
 		RootContainer.revert(getElement());
 		propertyComposite.pack(true);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.dialogs.PropertyPage#getElement()
+	 */
 	@Override
 	public IProject getElement() {
 		return (IProject) super.getElement().getAdapter(IProject.class);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
+	 */
 	@Override
 	public boolean performOk() {
 		try {

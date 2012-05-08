@@ -27,8 +27,15 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CPELibrary.
+ */
 public class CPELibrary extends CPEAbstractContainer implements ICPEType {
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
 	@Override
 	public Image getIcon() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAR);

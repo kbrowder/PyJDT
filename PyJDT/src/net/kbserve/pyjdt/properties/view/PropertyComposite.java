@@ -30,9 +30,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class PropertyComposite.
+ */
 public class PropertyComposite extends Composite {
+	
+	/** The libs tbl. */
 	private LibraryTableComposite libsTbl;
 
+	/**
+	 * Instantiates a new property composite.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 * @param project the project
+	 */
 	public PropertyComposite(Composite parent, int style, final IProject project) {
 		super(parent, style);
 		setLayout(new GridLayout(1, true));
@@ -41,10 +54,18 @@ public class PropertyComposite extends Composite {
 		
 	}
 
+	/**
+	 * Gets the items.
+	 *
+	 * @return the items
+	 */
 	public TreeItem[] getItems() {
 		return libsTbl.getItems();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#pack(boolean)
+	 */
 	@Override
 	public void pack(boolean changed) {
 		libsTbl.pack(changed);

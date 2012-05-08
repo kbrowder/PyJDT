@@ -36,9 +36,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class LibraryTableComposite.
+ */
 public class LibraryTableComposite extends Composite {
 
+	/**
+	 * The listener interface for receiving tableSelection events.
+	 * The class that is interested in processing a tableSelection
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addTableSelectionListener<code> method. When
+	 * the tableSelection event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see TableSelectionEvent
+	 */
 	private final class TableSelectionListener implements SelectionListener {
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
 		@Override
 		public void widgetSelected(SelectionEvent arg0) {
 			if ((arg0.detail & SWT.CHECK) == SWT.CHECK) {
@@ -68,11 +87,20 @@ public class LibraryTableComposite extends Composite {
 
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
 		@Override
 		public void widgetDefaultSelected(SelectionEvent arg0) {
 		}
 	}
 
+	/**
+	 * Update all.
+	 *
+	 * @param parent the parent
+	 * @param checked the checked
+	 */
 	protected void updateAll(TreeItem parent, boolean checked) {
 		for (TreeItem child : parent.getItems()) {
 			child.setChecked(checked);
@@ -82,10 +110,11 @@ public class LibraryTableComposite extends Composite {
 	}
 
 	/**
-	 * 
-	 * @param item
+	 * Make checks consistent with children.
+	 *
+	 * @param item the item
 	 * @return null if checkbox should be gray, true if checked, false if
-	 *         unchecked
+	 * unchecked
 	 */
 	private Boolean makeChecksConsistentWithChildren(TreeItem item) {
 		Boolean ret = item.getChecked();
@@ -100,16 +129,31 @@ public class LibraryTableComposite extends Composite {
 		return ret;
 	}
 
+	/**
+	 * Make checks consistent with children.
+	 */
 	private void makeChecksConsistentWithChildren() {
 		for (TreeItem item : table.getItems()) {
 			makeChecksConsistentWithChildren(item);
 		}
 	}
 
+	/** The project. */
 	private IProject project;
+	
+	/** The table. */
 	private Tree table;
+	
+	/** The table selection listener. */
 	private TableSelectionListener tableSelectionListener;
 
+	/**
+	 * Instantiates a new library table composite.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 * @param project the project
+	 */
 	public LibraryTableComposite(Composite parent, int style, IProject project) {
 		super(parent, style);
 		setLayout(new GridLayout(1, true));
@@ -122,10 +166,18 @@ public class LibraryTableComposite extends Composite {
 		this.project = project;
 	}
 
+	/**
+	 * Gets the items.
+	 *
+	 * @return the items
+	 */
 	public TreeItem[] getItems() {
 		return table.getItems();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.widgets.Control#pack(boolean)
+	 */
 	@Override
 	public void pack(boolean changed) {
 		if (changed) {
@@ -148,6 +200,11 @@ public class LibraryTableComposite extends Composite {
 		super.pack(changed);
 	}
 
+	/**
+	 * Expand all.
+	 *
+	 * @param items the items
+	 */
 	private void expandAll(TreeItem[] items) {
 		for (TreeItem ti : items) {
 			ti.setExpanded(true);
@@ -156,6 +213,13 @@ public class LibraryTableComposite extends Composite {
 
 	}
 
+	/**
+	 * Setup classpath info.
+	 *
+	 * @param tree the tree
+	 * @param cp the cp
+	 * @return the tree item
+	 */
 	private TreeItem setupClasspathInfo(Tree tree, ICPEType cp) {
 		if (cp.isAvailable()) {
 			TreeItem ti = new TreeItem(tree, SWT.NONE);
@@ -165,6 +229,13 @@ public class LibraryTableComposite extends Composite {
 		return null;
 	}
 
+	/**
+	 * Setup classpath info.
+	 *
+	 * @param treeItem the tree item
+	 * @param cp the cp
+	 * @return the tree item
+	 */
 	private TreeItem setupClasspathInfo(TreeItem treeItem, ICPEType cp) {
 		if (cp.isAvailable()) {
 			TreeItem ti = new TreeItem(treeItem, SWT.NONE);
@@ -174,6 +245,13 @@ public class LibraryTableComposite extends Composite {
 		return null;
 	}
 
+	/**
+	 * Populate children.
+	 *
+	 * @param parentClasspath the parent classpath
+	 * @param parentTreeItem the parent tree item
+	 * @return the tree item
+	 */
 	private TreeItem populateChildren(ICPEType parentClasspath,
 			TreeItem parentTreeItem) {
 		for (ICPEType child : parentClasspath.getChildren()) {
@@ -182,6 +260,12 @@ public class LibraryTableComposite extends Composite {
 		return parentTreeItem;
 	}
 
+	/**
+	 * Sets the up tree item.
+	 *
+	 * @param cp the cp
+	 * @param checked the checked
+	 */
 	private void setUpTreeItem(ICPEType cp, TreeItem checked) {
 		checked.setText(cp.toString());
 		checked.setChecked(cp.isEnabled());

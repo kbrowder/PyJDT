@@ -31,8 +31,15 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CPESource.
+ */
 public class CPESource extends CPEAbstractContainer implements ICPEType {
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
 	@Override
 	public Image getIcon() {
 		IFile file = ResourcesPlugin.getWorkspace().getRoot()

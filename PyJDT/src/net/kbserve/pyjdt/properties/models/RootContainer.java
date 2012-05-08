@@ -48,19 +48,37 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.ISharedImages;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RootContainer.
+ */
 public class RootContainer extends CPEAbstractContainer {
+	
+	/** The Constant roots. */
 	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
+	
+	/** The Constant reverseRoots. */
 	private static final Map<RootContainer, IProject> reverseRoots = new HashMap<RootContainer, IProject>();
 
+	/**
+	 * Gets the libraries xml.
+	 *
+	 * @param project the project
+	 * @return the libraries xml
+	 */
 	protected static IPath getLibrariesXml(IProject project) {
 		return prependWorkspaceLoc(getWorkingLocation(project).getFile(
 				Activator.PLUGIN_ID + ".root.prefs").getFullPath());
 	};
 
+	/**
+	 * Gets the working location.
+	 *
+	 * @param project the project
+	 * @return the working location
+	 */
 	protected static IFolder getWorkingLocation(IProject project) {
 		IFolder settings = project.getFolder(".settings");
 		if (!settings.exists()) {
@@ -81,6 +99,12 @@ public class RootContainer extends CPEAbstractContainer {
 		return pluginFolder;
 	}
 
+	/**
+	 * Gets the root.
+	 *
+	 * @param project the project
+	 * @return the root
+	 */
 	public static synchronized RootContainer getRoot(IProject project) {
 		RootContainer rc = roots.get(project);
 		if (rc == null) {
@@ -121,10 +145,18 @@ public class RootContainer extends CPEAbstractContainer {
 		return rc;
 	}
 
+	/**
+	 * Update.
+	 *
+	 * @param classpathEntry the classpath entry
+	 */
 	public synchronized void update(IClasspathEntry classpathEntry) {
 		this.update();
 	}
 
+	/**
+	 * Update.
+	 */
 	public synchronized void update() {
 		IProject project = reverseRoots.get(this);
 		IJavaProject javaProject = JavaCore.create(project);
@@ -138,6 +170,9 @@ public class RootContainer extends CPEAbstractContainer {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(org.eclipse.core.resources.IProject)
+	 */
 	@Override
 	public String getRealPath(IProject project) {
 		// TODO: What about the source path?
@@ -150,6 +185,12 @@ public class RootContainer extends CPEAbstractContainer {
 		}
 	}
 
+	/**
+	 * Revert.
+	 *
+	 * @param project the project
+	 * @return the root container
+	 */
 	public static synchronized RootContainer revert(IProject project) {
 		System.out.println("Reverting PyJDT from " + project);
 		roots.put(project, null);
@@ -158,6 +199,12 @@ public class RootContainer extends CPEAbstractContainer {
 		return getRoot(project);
 	}
 
+	/**
+	 * Save.
+	 *
+	 * @throws CoreException the core exception
+	 * @throws FileNotFoundException the file not found exception
+	 */
 	public synchronized void save() throws CoreException, FileNotFoundException {
 		try {
 			IPath path = getLibrariesXml(reverseRoots.get(this));
@@ -178,11 +225,17 @@ public class RootContainer extends CPEAbstractContainer {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#toString()
+	 */
 	@Override
 	public String toString() {
 		return "Project";
 	}
 
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
 	@Override
 	public Image getIcon() {
 		return null;
