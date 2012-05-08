@@ -83,7 +83,7 @@ public class LibraryTableComposite extends Composite {
 
 	/**
 	 * 
-	 * @param child
+	 * @param item
 	 * @return null if checkbox should be gray, true if checked, false if
 	 *         unchecked
 	 */
