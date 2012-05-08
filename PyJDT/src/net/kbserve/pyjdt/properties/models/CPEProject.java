@@ -25,37 +25,27 @@ package net.kbserve.pyjdt.properties.models;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class CPEProject extends CPEAbstractContainer implements
-		ICPEType {
+public class CPEProject extends CPEAbstractContainer implements ICPEType {
+
 
 	@Override
-	public String getRealPath(IProject project) {
-		IClasspathEntry cpe = getClasspath(project);
-		IProject libProj = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(cpe.getPath().lastSegment());
-		IJavaProject libJavaProject = null;
-		try {
-			libJavaProject = (IJavaProject) libProj
-					.getNature(JavaCore.NATURE_ID);
-		} catch (CoreException e) {
+	public Image getIcon() {
+		IProject project = ResourcesPlugin.getWorkspace().getRoot()
+				.getProject(new Path(getPath()).segment(0));
+		if(project != null) {
+			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
+			Image ret = workbenchLabelProvider.getImage(JavaCore.create(project));
+			if (ret != null) {
+				return ret;
+			}
 		}
-		IPath value = null;
-		if (libJavaProject != null) {
-			try {
-				value = libJavaProject.getOutputLocation();
-			} catch (JavaModelException e) {}
-		}
-		if (value == null) {
-			value = cpe.getPath();
-		}
-
-		return makeStringPath(prependWorkspaceLoc(value).makeAbsolute());
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAR);
 	}
 }

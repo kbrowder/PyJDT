@@ -99,9 +99,9 @@ public class LibraryTableComposite extends Composite {
 		item.setGrayed(ret == null);
 		return ret;
 	}
-	
+
 	private void makeChecksConsistentWithChildren() {
-		for(TreeItem item: table.getItems()) {
+		for (TreeItem item : table.getItems()) {
 			makeChecksConsistentWithChildren(item);
 		}
 	}
@@ -178,11 +178,6 @@ public class LibraryTableComposite extends Composite {
 			TreeItem parentTreeItem) {
 		for (ICPEType child : parentClasspath.getChildren()) {
 			setupClasspathInfo(parentTreeItem, child);
-			if (!parentClasspath.isEnabled() && child.isEnabled()) {
-				parentTreeItem.setGrayed(true);
-			} else if (parentClasspath.isEnabled() && !child.isEnabled()) {
-				parentTreeItem.setGrayed(true);
-			}
 		}
 		return parentTreeItem;
 	}
@@ -191,6 +186,9 @@ public class LibraryTableComposite extends Composite {
 		checked.setText(cp.toString());
 		checked.setChecked(cp.isEnabled());
 		checked.setData(cp);
-	}
+		if (cp.getIcon() != null) {
+			checked.setImage(cp.getIcon());
+		}
 
+	}
 }

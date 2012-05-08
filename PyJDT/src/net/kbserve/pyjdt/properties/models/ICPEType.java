@@ -27,6 +27,7 @@ import java.util.Collection;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
+import org.eclipse.swt.graphics.Image;
 
 public interface ICPEType {
 	public boolean isEnabled();
@@ -43,4 +44,5 @@ public interface ICPEType {
 	public void update(IClasspathEntry classpathEntry, IProject project);
 	boolean isAvailable();
 	void setAvailable(boolean available);
+	public Image getIcon();
 }

@@ -27,9 +27,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -60,13 +63,13 @@ public abstract class CPEAbstractContainer implements ICPEType {
 
 	public ICPEType getChild(String path) {
 		for (ICPEType child : children) {
-			if (child!=null && child.getPath().equals(path)) {
+			if (child != null && child.getPath().equals(path)) {
 				return child;
 			}
 		}
 		return null;
 	}
-	
+
 	public Collection<ICPEType> getChildren() {
 		return new ArrayList<ICPEType>(children);
 	}
@@ -95,6 +98,33 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return path;
 	}
 
+	@Override
+	public String getRealPath(IProject project) {
+		if (getPath().length() > 0) {
+			Path internalPath = new Path(getPath());
+			IResource workspaceResource = ResourcesPlugin.getWorkspace()
+					.getRoot().findMember(internalPath);
+			if (workspaceResource == null) {
+				try {
+					workspaceResource = ResourcesPlugin.getWorkspace()
+							.getRoot().getFile(internalPath);
+				} catch (IllegalArgumentException e) {
+					workspaceResource = ResourcesPlugin.getWorkspace()
+							.getRoot().getFolder(internalPath);
+				}
+			}
+
+			IPath rawLocation = workspaceResource.getLocation();
+			if (rawLocation != null) {
+				return rawLocation.toOSString();
+			}
+
+			// not a workspace path
+			return internalPath.toOSString();
+		}
+		return getPath();
+	}
+
 	public boolean hasChild(String path) {
 		for (ICPEType child : children) {
 			if (child.getPath().equals(path)) {
@@ -113,7 +143,6 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return this.enabled;
 	}
 
-
 	protected boolean removeChild(ICPEType child) {
 		return children.remove(child);
 	}
@@ -121,14 +150,13 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	@Override
 	public void setAvailable(boolean available) {
 		this.available = available;
-		if(!available) {
-			for(ICPEType child: getChildren()) {
+		if (!available) {
+			for (ICPEType child : getChildren()) {
 				child.setAvailable(available);
 			}
 		}
-		
-	}
 
+	}
 
 	@Override
 	public void setChildren(Collection<ICPEType> children) {
@@ -155,12 +183,14 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	public String toString() {
 		return getPath();
 	}
+
 	/** Class that allows implementation of how classes get updated **/
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 	}
-	public synchronized ICPEType updateChild(
-			IClasspathEntry child, IProject project) {
+
+	public synchronized ICPEType updateChild(IClasspathEntry child,
+			IProject project) {
 
 		String stringPath = makeStringPath(child);
 		ICPEType icp = getChild(stringPath);

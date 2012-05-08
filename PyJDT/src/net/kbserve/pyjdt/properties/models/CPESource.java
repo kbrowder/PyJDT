@@ -23,39 +23,34 @@
  *******************************************************************************/
 package net.kbserve.pyjdt.properties.models;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jdt.core.IClasspathEntry;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-public class CPESource extends CPEAbstractContainer implements
-		ICPEType {
+public class CPESource extends CPEAbstractContainer implements ICPEType {
 
 	@Override
-	public String getRealPath(IProject project) {
-		IClasspathEntry cpe = getClasspath(project);
-		IPath value = cpe.getOutputLocation();
-		if (value == null) {
-			IJavaProject javaProject = null;
-			try {
-				javaProject = (IJavaProject) project
-						.getNature(JavaCore.NATURE_ID);
-			} catch (CoreException e) {
-			}
-			if (javaProject != null) {
-				try {
-					value = javaProject.getOutputLocation();
-				} catch (JavaModelException e) {
-				}
+	public Image getIcon() {
+		IFile file = ResourcesPlugin.getWorkspace().getRoot()
+				.getFile(new Path(getPath()));
+		IProject project = file.getProject();
+		if (project != null) {
+			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
+			System.out.println("file.getRawLocation:" + file.getRawLocation());
+			Image ret = workbenchLabelProvider.getImage(project.findMember(file
+					.getRawLocation()));
+			System.out.println("source:" + file.getRawLocation());
+			System.out.println("ret:" + ret);
+			if (ret != null) {
+				return ret;
 			}
 		}
-		if(value == null) {
-			value = cpe.getPath();
-		}
-		return makeStringPath(prependWorkspaceLoc(value).makeAbsolute());
+		return PlatformUI.getWorkbench().getSharedImages()
+				.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
 	}
 
 }

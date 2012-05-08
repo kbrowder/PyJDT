@@ -48,6 +48,9 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.swt.graphics.Image;
 
 public class RootContainer extends CPEAbstractContainer {
 	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
@@ -179,4 +182,10 @@ public class RootContainer extends CPEAbstractContainer {
 	public String toString() {
 		return "Project";
 	}
+
+	@Override
+	public Image getIcon() {
+		return null;
+	}
+
 }

@@ -24,8 +24,9 @@
 package net.kbserve.pyjdt.properties.models;
 
 import org.eclipse.core.resources.IProject;
-
-
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.swt.graphics.Image;
 public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 
 	@Override
@@ -33,5 +34,8 @@ public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 		//TODO: implement me
 		throw new UnsupportedOperationException("Variable containers are not yet supported"); 
 	}
-
+	@Override
+	public Image getIcon() {
+		return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);
+	}
 }

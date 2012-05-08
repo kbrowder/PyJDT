@@ -29,6 +29,10 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.ui.ISharedImages;
+import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 
 public class CPEContainer extends CPEAbstractContainer implements
 		ICPEType {
@@ -61,7 +65,9 @@ public class CPEContainer extends CPEAbstractContainer implements
 
 	@Override
 	public String getRealPath(IProject project) {
-		return "";
+		String drp = super.getRealPath(project);
+		System.out.println("Containers real path:"+ drp);
+		return "";//TODO: is this really empty
 	}
 	
 	public void setDescription(String description) {
@@ -78,5 +84,8 @@ public class CPEContainer extends CPEAbstractContainer implements
 		return super.toString();
 	}
 	 
-
+	@Override
+	public Image getIcon() {
+		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
+	}
 }
