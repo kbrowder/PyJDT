@@ -158,7 +158,7 @@ public class RootContainer extends CPEAbstractContainer {
 	}
 
 	/**
-	 * Update.
+	 * Update the classpaths of this project.
 	 */
 	public synchronized void update() {
 		IProject project = reverseRoots.get(this);
@@ -191,7 +191,7 @@ public class RootContainer extends CPEAbstractContainer {
 	}
 
 	/**
-	 * Revert.
+	 * Revert the container back to it's saved or default state
 	 * 
 	 * @param project
 	 *            the project
@@ -206,7 +206,7 @@ public class RootContainer extends CPEAbstractContainer {
 	}
 
 	/**
-	 * Save.
+	 * Save the container to a project specific xml file
 	 * 
 	 * @throws CoreException
 	 *             the core exception
