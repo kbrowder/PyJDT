@@ -36,10 +36,11 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
- * Abstract implementation of ICPEType that defines some of the more
- * implementation pieces
+ * Abstract implementation of ICPEType that defines some of the more implementation pieces
  */
 public abstract class CPEAbstractContainer implements ICPEType {
 
@@ -159,9 +160,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.kbserve.pyjdt.properties.models.ICPEType#getRealPath(org.eclipse.
-	 * core.resources.IProject)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getRealPath(org.eclipse. core.resources.IProject)
 	 */
 	@Override
 	public String getRealPath(IProject project) {
@@ -193,8 +192,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.kbserve.pyjdt.properties.models.ICPEType#hasChild(java.lang.String)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#hasChild(java.lang.String)
 	 */
 	public boolean hasChild(String path) {
 		for (ICPEType child : children) {
@@ -254,9 +252,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.kbserve.pyjdt.properties.models.ICPEType#setChildren(java.util.Collection
-	 * )
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setChildren(java.util.Collection )
 	 */
 	@Override
 	public void setChildren(Collection<ICPEType> children) {
@@ -277,8 +273,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.kbserve.pyjdt.properties.models.ICPEType#setParent(java.lang.String)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setParent(java.lang.String)
 	 */
 	@Override
 	public void setParent(String parentPath) {
@@ -288,8 +283,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * net.kbserve.pyjdt.properties.models.ICPEType#setPath(java.lang.String)
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setPath(java.lang.String)
 	 */
 	public void setPath(String path) {
 		this.path = path;
@@ -307,8 +301,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	}
 
 	/**
-	 * Default update method, which defines how the class should be updated, in
-	 * this case noop.
+	 * Default update method, which defines how the class should be updated, in this case noop.
 	 * 
 	 * @param classpathEntry
 	 *            the classpath entry
@@ -320,8 +313,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	}
 
 	/**
-	 * Update the list of children to include the ICPEType contains the giveb
-	 * IClasspathEntry
+	 * Update the list of children to include the ICPEType contains the giveb IClasspathEntry
 	 * 
 	 * @param child
 	 *            the child
@@ -362,5 +354,34 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		}
 
 		return icp;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 */
+	@Override
+	public Image getIcon() {
+		if (getPath() != null) {
+			IResource resource = ResourcesPlugin.getWorkspace().getRoot()
+					.findMember(getPath());
+			if (resource != null) {
+				WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
+				return workbenchLabelProvider.getImage(resource);
+
+			}
+		}
+		System.out.println("Using default icon for " + getPath());
+		return getDefaultIcon();
+	}
+
+	/**
+	 * Gets the default icon for this object container
+	 * 
+	 * @return the image
+	 */
+	protected Image getDefaultIcon() {
+		return null;
 	}
 }

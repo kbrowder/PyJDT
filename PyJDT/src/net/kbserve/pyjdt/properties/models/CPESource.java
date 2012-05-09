@@ -23,35 +23,20 @@
  *******************************************************************************/
 package net.kbserve.pyjdt.properties.models;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
-
 
 /**
- * Class represents a org.eclipse.jdt.core.IClasspathEntry.CPE_SOURCE kind of IClasspathEntry
+ * Class represents a org.eclipse.jdt.core.IClasspathEntry.CPE_SOURCE kind of
+ * IClasspathEntry
  */
 public class CPESource extends CPEAbstractContainer implements ICPEType {
 
 	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getDefaultIcon()
 	 */
 	@Override
-	public Image getIcon() {
-		IFile file = ResourcesPlugin.getWorkspace().getRoot()
-				.getFile(new Path(getPath()));
-		IProject project = file.getProject();
-		if (project != null) {
-			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
-			Image ret = workbenchLabelProvider.getImage(project.findMember(new Path(getPath())));
-			if (ret != null) {
-				return ret;
-			}
-		}
+	protected Image getDefaultIcon() {
 		return PlatformUI.getWorkbench().getSharedImages()
 				.getImage(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER);
 	}

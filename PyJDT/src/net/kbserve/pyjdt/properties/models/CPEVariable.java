@@ -27,10 +27,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.Image;
-// TODO: Auto-generated Javadoc
-
 /**
- * The Class CPEVariable.
+ * The Class CPEVariable implements a CPE_VARIABLE container
  */
 public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 
@@ -47,7 +45,7 @@ public class CPEVariable extends CPEAbstractContainer implements ICPEType {
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
 	 */
 	@Override
-	public Image getIcon() {
+	public Image getDefaultIcon() {
 		return DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_ENV_VAR);
 	}
 }

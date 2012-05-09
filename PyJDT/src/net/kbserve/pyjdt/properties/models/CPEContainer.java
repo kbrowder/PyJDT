@@ -115,13 +115,12 @@ public class CPEContainer extends CPEAbstractContainer implements ICPEType {
 		return super.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+
+	/* (non-Javadoc)
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getDefaultIcon()
 	 */
 	@Override
-	public Image getIcon() {
+	public Image getDefaultIcon() {
 		return JavaUI.getSharedImages()
 				.getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}

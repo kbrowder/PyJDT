@@ -33,10 +33,10 @@ import org.eclipse.swt.graphics.Image;
 public class CPELibrary extends CPEAbstractContainer implements ICPEType {
 
 	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getDefaultIcon()
 	 */
 	@Override
-	public Image getIcon() {
+	protected Image getDefaultIcon() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAR);
 	}
 }

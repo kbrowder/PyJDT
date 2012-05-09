@@ -55,17 +55,18 @@ import org.eclipse.swt.graphics.Image;
  * The Class RootContainer.
  */
 public class RootContainer extends CPEAbstractContainer {
-	
+
 	/** The Constant roots. */
 	private static final Map<IProject, RootContainer> roots = new HashMap<IProject, RootContainer>();
-	
+
 	/** The Constant reverseRoots. */
 	private static final Map<RootContainer, IProject> reverseRoots = new HashMap<RootContainer, IProject>();
 
 	/**
 	 * Gets the libraries xml.
-	 *
-	 * @param project the project
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the libraries xml
 	 */
 	protected static IPath getLibrariesXml(IProject project) {
@@ -75,8 +76,9 @@ public class RootContainer extends CPEAbstractContainer {
 
 	/**
 	 * Gets the working location.
-	 *
-	 * @param project the project
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the working location
 	 */
 	protected static IFolder getWorkingLocation(IProject project) {
@@ -101,8 +103,9 @@ public class RootContainer extends CPEAbstractContainer {
 
 	/**
 	 * Gets the root.
-	 *
-	 * @param project the project
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the root
 	 */
 	public static synchronized RootContainer getRoot(IProject project) {
@@ -147,8 +150,9 @@ public class RootContainer extends CPEAbstractContainer {
 
 	/**
 	 * Update.
-	 *
-	 * @param classpathEntry the classpath entry
+	 * 
+	 * @param classpathEntry
+	 *            the classpath entry
 	 */
 	public synchronized void update(IClasspathEntry classpathEntry) {
 		this.update();
@@ -170,7 +174,9 @@ public class RootContainer extends CPEAbstractContainer {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(org.eclipse.core.resources.IProject)
 	 */
 	@Override
@@ -187,8 +193,9 @@ public class RootContainer extends CPEAbstractContainer {
 
 	/**
 	 * Revert.
-	 *
-	 * @param project the project
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the root container
 	 */
 	public static synchronized RootContainer revert(IProject project) {
@@ -201,9 +208,11 @@ public class RootContainer extends CPEAbstractContainer {
 
 	/**
 	 * Save.
-	 *
-	 * @throws CoreException the core exception
-	 * @throws FileNotFoundException the file not found exception
+	 * 
+	 * @throws CoreException
+	 *             the core exception
+	 * @throws FileNotFoundException
+	 *             the file not found exception
 	 */
 	public synchronized void save() throws CoreException, FileNotFoundException {
 		try {
@@ -225,20 +234,14 @@ public class RootContainer extends CPEAbstractContainer {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#toString()
 	 */
 	@Override
 	public String toString() {
 		return "Project";
-	}
-
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
-	 */
-	@Override
-	public Image getIcon() {
-		return null;
 	}
 
 }

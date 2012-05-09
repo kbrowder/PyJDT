@@ -23,36 +23,21 @@
  *******************************************************************************/
 package net.kbserve.pyjdt.properties.models;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class CPEProject.
+ * Class represents a org.eclipse.jdt.core.IClasspathEntry.CPE_PROJECT kind of IClasspathEntry
  */
 public class CPEProject extends CPEAbstractContainer implements ICPEType {
 
 
 	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
+	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getDefaultIcon()
 	 */
 	@Override
-	public Image getIcon() {
-		IProject project = ResourcesPlugin.getWorkspace().getRoot()
-				.getProject(new Path(getPath()).segment(0));
-		if(project != null) {
-			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
-			Image ret = workbenchLabelProvider.getImage(JavaCore.create(project));
-			if (ret != null) {
-				return ret;
-			}
-		}
+	protected Image getDefaultIcon() {
 		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_JAR);
 	}
 }

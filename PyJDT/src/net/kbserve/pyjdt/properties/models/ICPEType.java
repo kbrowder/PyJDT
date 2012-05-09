@@ -29,117 +29,126 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.swt.graphics.Image;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Interface ICPEType.
+ * The Interface ICPEType is the interface for all IClasspathEntry containers in net.kbserve.pyjdt.
  */
 public interface ICPEType {
-	
+	//TODO: rename to IClasspathContainer?
 	/**
-	 * Checks if is enabled.
-	 *
+	 * Is the container enabled?
+	 * 
 	 * @return true, if is enabled
 	 */
 	public boolean isEnabled();
-	
+
 	/**
-	 * Sets the enabled.
-	 *
-	 * @param enabled the new enabled
+	 * Sets the enabled state of the container
+	 * 
+	 * @param enabled
+	 *            the new enabled state.
 	 */
 	public void setEnabled(boolean enabled);
-	
+
 	/**
-	 * Gets the children.
-	 *
+	 * Gets the children of this container.
+	 * 
 	 * @return the children
 	 */
 	public Collection<ICPEType> getChildren();
-	
+
 	/**
-	 * Sets the children.
-	 *
-	 * @param children the new children
+	 * Sets the children sets the children of this container
+	 * 
+	 * @param children
+	 *            the new children
 	 */
 	public void setChildren(Collection<ICPEType> children);
-	
+
 	/**
-	 * Checks for child.
-	 *
-	 * @param path the path
-	 * @return true, if successful
+	 * Determines if the container has a child with {@link net.kbserve.pyjdt.properties.models.ICPEType.getPath()}==path
+	 * 
+	 * @param path
+	 *            the path
+	 * @return true, if it has a child with that path
 	 */
 	public boolean hasChild(String path);
-	
+
 	/**
-	 * Gets the path.
-	 *
+	 * Gets the path of the object, note this is the JDT path which is often not an absolute path.
+	 * 
 	 * @return the path
 	 */
 	public String getPath();
-	
+
 	/**
-	 * Gets the real path.
-	 *
-	 * @param project the project
+	 * Gets the real path, this is the actual (absolute) path of the object.
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the real path
 	 */
 	public String getRealPath(IProject project);
-	
+
 	/**
 	 * Sets the path.
-	 *
-	 * @param path the new path
+	 * 
+	 * @param path
+	 *            the new path
 	 */
 	public void setPath(String path);
-	
+
 	/**
-	 * Gets the classpath.
-	 *
-	 * @param project the project
+	 * Gets the classpath entry for the container
+	 * 
+	 * @param project
+	 *            the project
 	 * @return the classpath
 	 */
 	public IClasspathEntry getClasspath(IProject project);
-	
+
 	/**
-	 * Gets the parent.
-	 *
+	 * Gets the parent path.
+	 * 
 	 * @return the parent
 	 */
 	public String getParent();
-	
+
 	/**
-	 * Sets the parent.
-	 *
-	 * @param parentPath the new parent
+	 * Sets the parent path
+	 * 
+	 * @param parentPath
+	 *            the new parent
 	 */
 	public void setParent(String parentPath);
-	
+
 	/**
-	 * Update.
-	 *
-	 * @param classpathEntry the classpath entry
-	 * @param project the project
+	 * Update the current classpath container with a new classpathEntry
+	 * 
+	 * @param classpathEntry
+	 *            the classpath entry
+	 * @param project
+	 *            the project
 	 */
 	public void update(IClasspathEntry classpathEntry, IProject project);
-	
+
 	/**
-	 * Checks if is available.
-	 *
-	 * @return true, if is available
+	 * Checks if is this object is available, eg if it's in the environment
+	 * 
+	 * @return true, if it is available
 	 */
 	boolean isAvailable();
-	
+
 	/**
-	 * Sets the available.
-	 *
-	 * @param available the new available
+	 * Sets the availablity of this object.
+	 * 
+	 * @param available
+	 *            the new available
 	 */
 	void setAvailable(boolean available);
-	
+
 	/**
-	 * Gets the icon.
-	 *
+	 * Gets the icon, this is what get's displayed in UI's
+	 * 
 	 * @return the icon
 	 */
 	public Image getIcon();
