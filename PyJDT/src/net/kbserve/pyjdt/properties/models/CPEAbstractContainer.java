@@ -37,26 +37,30 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class CPEAbstractContainer.
+ * Abstract implementation of ICPEType that defines some of the more
+ * implementation pieces
  */
 public abstract class CPEAbstractContainer implements ICPEType {
-	
+
 	/**
-	 * Make string path.
-	 *
-	 * @param classpathEntry the classpath entry
+	 * Alias for CPEAbstractContainer.makeStringPath(classpathEntry.getPath())
+	 * 
+	 * @param classpathEntry
+	 *            the classpath entry
 	 * @return the string
+	 * @deprecated Use CPEAbstractContainer.makeStringPath(String)
 	 */
+	@Deprecated
 	public static String makeStringPath(IClasspathEntry classpathEntry) {
 		return makeStringPath(classpathEntry.getPath());
 	}
 
 	/**
-	 * Make string path.
-	 *
-	 * @param path the path
+	 * Convert the path to a string.
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the string
 	 */
 	public static String makeStringPath(IPath path) {
@@ -64,9 +68,10 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	}
 
 	/**
-	 * Prepend workspace loc.
-	 *
-	 * @param value the value
+	 * Prepend workspace locaction to the IPath.
+	 * 
+	 * @param value
+	 *            the value
 	 * @return the i path
 	 */
 	protected static IPath prependWorkspaceLoc(IPath value) {
@@ -76,25 +81,17 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return value;
 	}
 
-	/** The enabled. */
 	private boolean enabled = true;
-	
-	/** The children. */
 	private List<ICPEType> children = new ArrayList<ICPEType>();
-
-	/** The path. */
 	private String path = null;
-	
-	/** The parent path. */
 	private String parentPath = null;
-	
-	/** The available. */
 	private boolean available = true;
 
 	/**
 	 * Gets the child.
-	 *
-	 * @param path the path
+	 * 
+	 * @param path
+	 *            the path
 	 * @return the child
 	 */
 	public ICPEType getChild(String path) {
@@ -106,14 +103,22 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Gets the children.
+	 * 
+	 * @return the children
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getChildren()
 	 */
 	public Collection<ICPEType> getChildren() {
 		return new ArrayList<ICPEType>(children);
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Gets the classpath.
+	 * 
+	 * @param project
+	 *            the project
+	 * @return the classpath
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getClasspath(org.eclipse.core.resources.IProject)
 	 */
 	@Override
@@ -131,7 +136,10 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Gets the parent.
+	 * 
+	 * @return the parent
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getParent()
 	 */
 	@Override
@@ -139,15 +147,21 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return this.parentPath;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getPath()
 	 */
 	public String getPath() {
 		return path;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getRealPath(org.eclipse.core.resources.IProject)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.ICPEType#getRealPath(org.eclipse.
+	 * core.resources.IProject)
 	 */
 	@Override
 	public String getRealPath(IProject project) {
@@ -176,8 +190,11 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return getPath();
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#hasChild(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.ICPEType#hasChild(java.lang.String)
 	 */
 	public boolean hasChild(String path) {
 		for (ICPEType child : children) {
@@ -188,7 +205,9 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#isAvailable()
 	 */
 	@Override
@@ -196,7 +215,9 @@ public abstract class CPEAbstractContainer implements ICPEType {
 		return this.available;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#isEnabled()
 	 */
 	public boolean isEnabled() {
@@ -204,16 +225,19 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	}
 
 	/**
-	 * Removes the child.
-	 *
-	 * @param child the child
-	 * @return true, if successful
+	 * Removes the child ICPEType from this
+	 * 
+	 * @param child
+	 *            the child
+	 * @return true, if removed, false if there wasn't anything to remove
 	 */
 	protected boolean removeChild(ICPEType child) {
 		return children.remove(child);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setAvailable(boolean)
 	 */
 	@Override
@@ -227,8 +251,12 @@ public abstract class CPEAbstractContainer implements ICPEType {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setChildren(java.util.Collection)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.ICPEType#setChildren(java.util.Collection
+	 * )
 	 */
 	@Override
 	public void setChildren(Collection<ICPEType> children) {
@@ -237,30 +265,40 @@ public abstract class CPEAbstractContainer implements ICPEType {
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setParent(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.ICPEType#setParent(java.lang.String)
 	 */
 	@Override
 	public void setParent(String parentPath) {
 		this.parentPath = parentPath;
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.ICPEType#setPath(java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.ICPEType#setPath(java.lang.String)
 	 */
 	public void setPath(String path) {
 		this.path = path;
 
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -269,20 +307,26 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	}
 
 	/**
-	 * Class that allows implementation of how classes get updated *.
-	 *
-	 * @param classpathEntry the classpath entry
-	 * @param project the project
+	 * Default update method, which defines how the class should be updated, in
+	 * this case noop.
+	 * 
+	 * @param classpathEntry
+	 *            the classpath entry
+	 * @param project
+	 *            the project
 	 */
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
 	}
 
 	/**
-	 * Update child.
-	 *
-	 * @param child the child
-	 * @param project the project
+	 * Update the list of children to include the ICPEType contains the giveb
+	 * IClasspathEntry
+	 * 
+	 * @param child
+	 *            the child
+	 * @param project
+	 *            the project
 	 * @return the iCPE type
 	 */
 	public synchronized ICPEType updateChild(IClasspathEntry child,

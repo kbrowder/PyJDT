@@ -31,9 +31,9 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class CPESource.
+ * Class represents a org.eclipse.jdt.core.IClasspathEntry.CPE_SOURCE kind of IClasspathEntry
  */
 public class CPESource extends CPEAbstractContainer implements ICPEType {
 
@@ -47,9 +47,8 @@ public class CPESource extends CPEAbstractContainer implements ICPEType {
 		IProject project = file.getProject();
 		if (project != null) {
 			WorkbenchLabelProvider workbenchLabelProvider = new WorkbenchLabelProvider();
-			Image ret = workbenchLabelProvider.getImage(project.findMember(file
-					.getRawLocation()));
-			if (ret != null) {//TODO: fixme
+			Image ret = workbenchLabelProvider.getImage(project.findMember(new Path(getPath())));
+			if (ret != null) {
 				return ret;
 			}
 		}

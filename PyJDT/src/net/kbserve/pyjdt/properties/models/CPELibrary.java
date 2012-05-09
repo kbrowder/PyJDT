@@ -27,9 +27,8 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class CPELibrary.
+ * Class represents a org.eclipse.jdt.core.IClasspathEntry.CPE_CONTAINER kind of IClasspathEntry 
  */
 public class CPELibrary extends CPEAbstractContainer implements ICPEType {
 

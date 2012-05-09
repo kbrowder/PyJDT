@@ -33,18 +33,19 @@ import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.swt.graphics.Image;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class CPEContainer.
+ * The Class CPEContainer serves as a representation of IClasspathEntryies of
+ * getEntryKind() == org.eclipse.jdt.core.IClasspathEntry.CPE_CONTAINER
  */
-public class CPEContainer extends CPEAbstractContainer implements
-		ICPEType {
-
-	/** The description. */
+public class CPEContainer extends CPEAbstractContainer implements ICPEType {
 	private String description = null;
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#update(org.eclipse.jdt.core.IClasspathEntry, org.eclipse.core.resources.IProject)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.CPEAbstractContainer#update(org.eclipse
+	 * .jdt.core.IClasspathEntry, org.eclipse.core.resources.IProject)
 	 */
 	@Override
 	public void update(IClasspathEntry classpathEntry, IProject project) {
@@ -56,7 +57,7 @@ public class CPEContainer extends CPEAbstractContainer implements
 							javaProject);
 			setDescription(classpathContainer.getDescription());
 			setAvailable(true);
-			for(ICPEType child: getChildren()) {
+			for (ICPEType child : getChildren()) {
 				child.setAvailable(false);
 			}
 			for (IClasspathEntry containerChild : classpathContainer
@@ -70,48 +71,58 @@ public class CPEContainer extends CPEAbstractContainer implements
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(org.eclipse.core.resources.IProject)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * net.kbserve.pyjdt.properties.models.CPEAbstractContainer#getRealPath(
+	 * org.eclipse.core.resources.IProject)
 	 */
 	@Override
 	public String getRealPath(IProject project) {
 		return "";
 	}
-	
+
 	/**
-	 * Sets the description.
-	 *
-	 * @param description the new description
+	 * Sets the description, a description is the name the user expects of a CPE_CONTAINER
+	 * 
+	 * @param description
+	 *            the new description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
-	 * Gets the description.
-	 *
+	 * Gets the description, a description is the name the user expects of a CPE_CONTAINER.
+	 * 
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.CPEAbstractContainer#toString()
 	 */
 	@Override
 	public String toString() {
-		if(description != null) {
+		if (description != null) {
 			return getDescription();
 		}
 		return super.toString();
 	}
-	 
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see net.kbserve.pyjdt.properties.models.ICPEType#getIcon()
 	 */
 	@Override
 	public Image getIcon() {
-		return JavaUI.getSharedImages().getImage(ISharedImages.IMG_OBJS_LIBRARY);
+		return JavaUI.getSharedImages()
+				.getImage(ISharedImages.IMG_OBJS_LIBRARY);
 	}
 }
