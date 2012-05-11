@@ -36,26 +36,35 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class LibraryTableComposite.
+ * The Class LibraryTableComposite is the container class for an org.eclipse.swt.widgets.Tree. It is designed so that
+ * you should be able to toss it pretty much anywhere in an SWT environment.
  */
 public class LibraryTableComposite extends Composite {
 
 	/**
-	 * The listener interface for receiving tableSelection events.
-	 * The class that is interested in processing a tableSelection
-	 * event implements this interface, and the object created
-	 * with that class is registered with a component using the
-	 * component's <code>addTableSelectionListener<code> method. When
+	 * The listener interface for receiving tableSelection events. The class that is interested in processing a
+	 * tableSelection event implements this interface, and the object created with that class is registered with a
+	 * component using the component's <code>addTableSelectionListener<code> method. When
 	 * the tableSelection event occurs, that object's appropriate
 	 * method is invoked.
-	 *
+	 * 
 	 * @see TableSelectionEvent
 	 */
 	private final class TableSelectionListener implements SelectionListener {
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+		 */
+		@Override
+		public void widgetDefaultSelected(SelectionEvent arg0) {
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
 		@Override
@@ -78,7 +87,7 @@ public class LibraryTableComposite extends Composite {
 					} else {
 						tree.setGrayed(false);
 					}
-					updateAll(tree, tree.getChecked());
+					updateChildCheckboxes(tree);
 					makeChecksConsistentWithChildren();
 				} catch (ClassCastException e) {
 					e.printStackTrace();
@@ -86,73 +95,23 @@ public class LibraryTableComposite extends Composite {
 			}
 
 		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
-		 */
-		@Override
-		public void widgetDefaultSelected(SelectionEvent arg0) {
-		}
 	}
 
-	/**
-	 * Update all.
-	 *
-	 * @param parent the parent
-	 * @param checked the checked
-	 */
-	protected void updateAll(TreeItem parent, boolean checked) {
-		for (TreeItem child : parent.getItems()) {
-			child.setChecked(checked);
-			child.setGrayed(false);
-			updateAll(child, checked);
-		}
-	}
-
-	/**
-	 * Make checks consistent with children.
-	 *
-	 * @param item the item
-	 * @return null if checkbox should be gray, true if checked, false if
-	 * unchecked
-	 */
-	private Boolean makeChecksConsistentWithChildren(TreeItem item) {
-		Boolean ret = item.getChecked();
-		for (TreeItem child : item.getItems()) {
-			Boolean current = makeChecksConsistentWithChildren(child);
-			if (current != ret) {
-				ret = null;
-			}
-		}
-		item.setChecked(!Boolean.FALSE.equals(ret));
-		item.setGrayed(ret == null);
-		return ret;
-	}
-
-	/**
-	 * Make checks consistent with children.
-	 */
-	private void makeChecksConsistentWithChildren() {
-		for (TreeItem item : table.getItems()) {
-			makeChecksConsistentWithChildren(item);
-		}
-	}
-
-	/** The project. */
 	private IProject project;
-	
-	/** The table. */
+
 	private Tree table;
-	
-	/** The table selection listener. */
+
 	private TableSelectionListener tableSelectionListener;
 
 	/**
-	 * Instantiates a new library table composite.
-	 *
-	 * @param parent the parent
-	 * @param style the style
-	 * @param project the project
+	 * Instantiates a new library table composite, setting up the tree along the way.
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param style
+	 *            the style
+	 * @param project
+	 *            the project
 	 */
 	public LibraryTableComposite(Composite parent, int style, IProject project) {
 		super(parent, style);
@@ -167,15 +126,60 @@ public class LibraryTableComposite extends Composite {
 	}
 
 	/**
-	 * Gets the items.
-	 *
+	 * Expand all items in the tree.
+	 * 
+	 * @param items
+	 *            the items
+	 */
+	private void expandAll(TreeItem[] items) {
+		for (TreeItem ti : items) {
+			ti.setExpanded(true);
+			expandAll(ti.getItems());
+		}
+
+	}
+
+	/**
+	 * Gets the tree items in the table.
+	 * 
 	 * @return the items
 	 */
 	public TreeItem[] getItems() {
 		return table.getItems();
 	}
 
-	/* (non-Javadoc)
+	/**
+	 * Make checks marks consistent with children.
+	 */
+	private void makeChecksConsistentWithChildren() {
+		for (TreeItem item : table.getItems()) {
+			makeChecksConsistentWithChildren(item);
+		}
+	}
+
+	/**
+	 * Make check marks consistent with children.
+	 * 
+	 * @param item
+	 *            the item
+	 * @return null if checkbox should be gray, true if checked, false if unchecked
+	 */
+	private Boolean makeChecksConsistentWithChildren(TreeItem item) {
+		Boolean ret = item.getChecked();
+		for (TreeItem child : item.getItems()) {
+			Boolean current = makeChecksConsistentWithChildren(child);
+			if (current != ret) {
+				ret = null;
+			}
+		}
+		item.setChecked(!Boolean.FALSE.equals(ret));
+		item.setGrayed(ret == null);
+		return ret;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#pack(boolean)
 	 */
 	@Override
@@ -201,23 +205,29 @@ public class LibraryTableComposite extends Composite {
 	}
 
 	/**
-	 * Expand all.
-	 *
-	 * @param items the items
+	 * Populate children of the tree with the given ICPEType
+	 * 
+	 * @param parentClasspath
+	 *            the parent classpath
+	 * @param parentTreeItem
+	 *            the parent tree item
+	 * @return the tree item
 	 */
-	private void expandAll(TreeItem[] items) {
-		for (TreeItem ti : items) {
-			ti.setExpanded(true);
-			expandAll(ti.getItems());
+	private TreeItem populateChildren(ICPEType parentClasspath,
+			TreeItem parentTreeItem) {
+		for (ICPEType child : parentClasspath.getChildren()) {
+			setupClasspathInfo(parentTreeItem, child);
 		}
-
+		return parentTreeItem;
 	}
 
 	/**
-	 * Setup classpath info.
-	 *
-	 * @param tree the tree
-	 * @param cp the cp
+	 * Setup the classpath info tree items
+	 * 
+	 * @param tree
+	 *            the tree
+	 * @param cp
+	 *            the cp
 	 * @return the tree item
 	 */
 	private TreeItem setupClasspathInfo(Tree tree, ICPEType cp) {
@@ -230,10 +240,12 @@ public class LibraryTableComposite extends Composite {
 	}
 
 	/**
-	 * Setup classpath info.
-	 *
-	 * @param treeItem the tree item
-	 * @param cp the cp
+	 * Setup the classpath info tree items
+	 * 
+	 * @param treeItem
+	 *            the tree item
+	 * @param cp
+	 *            the cp
 	 * @return the tree item
 	 */
 	private TreeItem setupClasspathInfo(TreeItem treeItem, ICPEType cp) {
@@ -246,25 +258,12 @@ public class LibraryTableComposite extends Composite {
 	}
 
 	/**
-	 * Populate children.
-	 *
-	 * @param parentClasspath the parent classpath
-	 * @param parentTreeItem the parent tree item
-	 * @return the tree item
-	 */
-	private TreeItem populateChildren(ICPEType parentClasspath,
-			TreeItem parentTreeItem) {
-		for (ICPEType child : parentClasspath.getChildren()) {
-			setupClasspathInfo(parentTreeItem, child);
-		}
-		return parentTreeItem;
-	}
-
-	/**
 	 * Sets the up tree item.
-	 *
-	 * @param cp the cp
-	 * @param checked the checked
+	 * 
+	 * @param cp
+	 *            the cp
+	 * @param checked
+	 *            the checked
 	 */
 	private void setUpTreeItem(ICPEType cp, TreeItem checked) {
 		checked.setText(cp.toString());
@@ -274,5 +273,19 @@ public class LibraryTableComposite extends Composite {
 			checked.setImage(cp.getIcon());
 		}
 
+	}
+
+	/**
+	 * Update all the children TreeItems of the given parent to be the same check as the parent.
+	 * 
+	 * @param parent
+	 *            the parent
+	 */
+	protected void updateChildCheckboxes(TreeItem parent) {
+		for (TreeItem child : parent.getItems()) {
+			child.setChecked(parent.getChecked());
+			child.setGrayed(false);
+			updateChildCheckboxes(child);
+		}
 	}
 }

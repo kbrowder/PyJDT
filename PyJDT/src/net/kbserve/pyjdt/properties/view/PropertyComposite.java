@@ -30,40 +30,45 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 
-// TODO: Auto-generated Javadoc
+
 /**
- * The Class PropertyComposite.
+ * The Class PropertyComposite is the root of the property page, it's meant so we can extend and add additional items to the page
  */
 public class PropertyComposite extends Composite {
-	
+
 	/** The libs tbl. */
 	private LibraryTableComposite libsTbl;
 
 	/**
 	 * Instantiates a new property composite.
-	 *
-	 * @param parent the parent
-	 * @param style the style
-	 * @param project the project
+	 * 
+	 * @param parent
+	 *            the parent
+	 * @param style
+	 *            the style
+	 * @param project
+	 *            the project
 	 */
 	public PropertyComposite(Composite parent, int style, final IProject project) {
 		super(parent, style);
 		setLayout(new GridLayout(1, true));
 		setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		libsTbl = new LibraryTableComposite(this, SWT.NONE, project);
-		
+
 	}
 
 	/**
 	 * Gets the items.
-	 *
+	 * 
 	 * @return the items
 	 */
 	public TreeItem[] getItems() {
 		return libsTbl.getItems();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.swt.widgets.Control#pack(boolean)
 	 */
 	@Override
@@ -71,8 +76,7 @@ public class PropertyComposite extends Composite {
 		libsTbl.pack(changed);
 		super.pack(changed);
 		getParent().layout(changed, true);
-		
-		
+
 	}
 
 }

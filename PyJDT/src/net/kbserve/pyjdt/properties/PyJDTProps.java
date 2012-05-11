@@ -33,9 +33,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-// TODO: Auto-generated Javadoc
 /**
- * The Class PyJDTProps.
+ * The Class PyJDTProps is the property page you get when you enter project properties on a project that has both a
+ * PyDev nature and a JDT nature (see the plugin.xml)
  */
 public class PyJDTProps extends PropertyPage {
 
@@ -51,8 +51,9 @@ public class PyJDTProps extends PropertyPage {
 
 	/**
 	 * Creates the contents.
-	 *
-	 * @param parent the parent
+	 * 
+	 * @param parent
+	 *            the parent
 	 * @return the control
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -63,7 +64,9 @@ public class PyJDTProps extends PropertyPage {
 		return propertyComposite;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
@@ -72,7 +75,9 @@ public class PyJDTProps extends PropertyPage {
 		propertyComposite.pack(true);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.dialogs.PropertyPage#getElement()
 	 */
 	@Override
@@ -80,7 +85,9 @@ public class PyJDTProps extends PropertyPage {
 		return (IProject) super.getElement().getAdapter(IProject.class);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 	 */
 	@Override

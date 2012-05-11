@@ -35,7 +35,6 @@ public class Activator extends AbstractUIPlugin {
 	/** The plugin id. */
 	public static final String PLUGIN_ID = "net.kbserve.pyjdt"; //$NON-NLS-1$
 
-	/** The shared instance */
 	private static Activator plugin;
 
 	/**
