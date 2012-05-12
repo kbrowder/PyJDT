@@ -13,7 +13,7 @@ to modify the Python Paths in addition to inspecting IClasspathEntries in the pr
 * No way of seeing the generated path.
 * No support for CPE_VARIABLE entries
 * Limited testing
-** No unittests
+** very few unittests
 * No good way of running Python/Jython inside the JDT output directory.
 
 =License=
