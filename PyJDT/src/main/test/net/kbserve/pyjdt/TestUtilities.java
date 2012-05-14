@@ -8,9 +8,12 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
@@ -34,18 +37,29 @@ public class TestUtilities {
 			String sourceDir) throws CoreException {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject(projectName);
+
 		project.create(null);
 		project.open(null);
-
+		
+		IProjectDescription description = project.getDescription();
+		description.setComment("Project made for unittests");
+		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
+		project.setDescription(description, null);
+		
+		Assert.assertTrue("Project doesn't exist: " + projectName,
+				project.exists());
+		Assert.assertTrue("Project is not open", project.isOpen());
+		System.out.println(project.getLocation());
+		
 		IJavaProject jdtProject = JavaCore.create(project);
+
 		IFolder binFolder = project.getFolder("bin");
 		binFolder.create(false, true, null);
-		jdtProject.setOutputLocation(binFolder.getFullPath(), null);
+		System.out.println("Created " + binFolder.getFullPath());
 		if (sourceDir != null) {
 			addSourceFolder(project, sourceDir);
 		}
-		Assert.assertNotNull("Project not found", ResourcesPlugin
-				.getWorkspace().getRoot().findMember(project.getLocation()));
+		jdtProject.setOutputLocation(binFolder.getFullPath(), null);
 
 		projects.put(projectName, project);
 
@@ -111,7 +125,7 @@ public class TestUtilities {
 			if (!duplicated) {
 				IClasspathEntry[] newEntries = Arrays.copyOf(origionalEntries,
 						origionalEntries.length + 1);
-				newEntries[newEntries.length] = newSourceEntry;
+				newEntries[origionalEntries.length] = newSourceEntry;
 				javaProject.setRawClasspath(newEntries, null);
 			}
 		}
