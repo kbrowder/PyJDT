@@ -2,6 +2,7 @@ package net.kbserve.pyjdt;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import junit.framework.AssertionFailedError;
@@ -9,12 +10,9 @@ import junit.framework.AssertionFailedError;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jdt.core.IClasspathContainer;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
@@ -40,26 +38,30 @@ public class TestUtilities {
 
 		project.create(null);
 		project.open(null);
-		
+
 		IProjectDescription description = project.getDescription();
 		description.setComment("Project made for unittests");
 		description.setNatureIds(new String[] { JavaCore.NATURE_ID });
 		project.setDescription(description, null);
-		
+
 		Assert.assertTrue("Project doesn't exist: " + projectName,
 				project.exists());
 		Assert.assertTrue("Project is not open", project.isOpen());
 		System.out.println(project.getLocation());
-		
+
 		IJavaProject jdtProject = JavaCore.create(project);
 
 		IFolder binFolder = project.getFolder("bin");
-		binFolder.create(false, true, null);
+		if (!binFolder.exists()) {
+			binFolder.create(false, true, null);
+		}
+
 		System.out.println("Created " + binFolder.getFullPath());
 		if (sourceDir != null) {
-			addSourceFolder(project, sourceDir);
+			addSourceFolder(project, sourceDir, true);
 		}
 		jdtProject.setOutputLocation(binFolder.getFullPath(), null);
+		jdtProject.setRawClasspath(new IClasspathEntry[] {}, null);
 
 		projects.put(projectName, project);
 
@@ -70,19 +72,13 @@ public class TestUtilities {
 
 	public static void addLibraryContainer(IPath container, IJavaProject project)
 			throws JavaModelException {
-		// IClasspathEntry containerEntry = JavaCore.newContainerEntry(container);
-		IJavaProject[] javaProjects = { project };
-		IClasspathContainer[] containers = { null };
-		JavaCore.setClasspathContainer(container, javaProjects, containers,
-				null);
-		for (IClasspathEntry ice : project.getRawClasspath()) {
-			if (ice.getPath().equals(container)) {
-				return;
-			}
-		}
-		throw new AssertionFailedError("The container " + container
-				+ " was not added to the project "
-				+ project.getProject().getName());
+		IClasspathEntry containerEntry = JavaCore.newContainerEntry(container);
+		/*
+		 * IClasspathContainer classpathContainer = JavaCore.getClasspathContainer( container, project);
+		 * JavaCore.setClasspathContainer(container, new IJavaProject[] { project }, new IClasspathContainer[] {
+		 * classpathContainer }, null);
+		 */
+		addToClasspath(project, containerEntry);
 	}
 
 	public static void addPyDevNature(IProject project, String sourceDir)
@@ -100,8 +96,8 @@ public class TestUtilities {
 		}
 	}
 
-	public static void addSourceFolder(IProject project, String sourceDir)
-			throws CoreException {
+	public static void addSourceFolder(IProject project, String sourceDir,
+			boolean removeOtherSourceFolders) throws CoreException {
 		IFolder src = project.getFolder(sourceDir);
 		if (!src.exists()) {
 			src.create(false, true, null);
@@ -112,22 +108,19 @@ public class TestUtilities {
 					.getPackageFragmentRoot(src);
 			IClasspathEntry newSourceEntry = JavaCore
 					.newSourceEntry(sourceFragment.getPath());
-
-			IClasspathEntry[] origionalEntries = javaProject.getRawClasspath();
-
-			boolean duplicated = false;
-			for (IClasspathEntry ce : origionalEntries) {
-				if (ce.getPath().equals(newSourceEntry)) {
-					duplicated = true;
-					break;
+			if (removeOtherSourceFolders) {
+				LinkedList<IClasspathEntry> filteredClasspaths = new LinkedList<IClasspathEntry>();
+				int removeKind = IClasspathEntry.CPE_SOURCE;
+				for (IClasspathEntry cpe : javaProject.getRawClasspath()) {
+					if (cpe.getEntryKind() != removeKind) {
+						filteredClasspaths.add(cpe);
+					}
 				}
+				javaProject.setRawClasspath(
+						filteredClasspaths.toArray(new IClasspathEntry[0]),
+						null);
 			}
-			if (!duplicated) {
-				IClasspathEntry[] newEntries = Arrays.copyOf(origionalEntries,
-						origionalEntries.length + 1);
-				newEntries[origionalEntries.length] = newSourceEntry;
-				javaProject.setRawClasspath(newEntries, null);
-			}
+			addToClasspath(javaProject, newSourceEntry);
 		}
 		if (project.hasNature(PythonNature.PYTHON_NATURE_ID)) {
 			IPythonPathNature pythonPathNature = PythonNature.getPythonNature(
@@ -148,6 +141,34 @@ public class TestUtilities {
 			}
 		}
 
+	}
+
+	protected static void addToClasspath(IJavaProject project,
+			IClasspathEntry newEntry) throws JavaModelException {
+		IClasspathEntry[] origionalEntries = project.getRawClasspath();
+
+		boolean duplicated = false;
+		for (IClasspathEntry ce : origionalEntries) {
+			System.out.println("ice:" + ce.getPath());
+			if (ce.getPath().equals(newEntry)) {
+				duplicated = true;
+				break;
+			}
+		}
+		if (!duplicated) {
+			IClasspathEntry[] newEntries = Arrays.copyOf(origionalEntries,
+					origionalEntries.length + 1);
+			newEntries[origionalEntries.length] = newEntry;
+			project.setRawClasspath(newEntries, null);
+		}
+		for (IClasspathEntry ice : project.getRawClasspath()) {
+			if (ice.equals(newEntry)) {
+				return;
+			}
+		}
+		throw new AssertionFailedError("The IClasspathEntry " + newEntry
+				+ " was not added to the project "
+				+ project.getProject().getName());
 	}
 
 	public static void deleteAllTestProjects() throws CoreException {
