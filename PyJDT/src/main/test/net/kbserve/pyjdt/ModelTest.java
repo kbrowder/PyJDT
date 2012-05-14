@@ -1,10 +1,12 @@
 package net.kbserve.pyjdt;
 
-import static org.junit.Assert.fail;
+import net.kbserve.pyjdt.properties.models.RootContainer;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.junit.JUnitCore;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -23,12 +25,13 @@ public class ModelTest {
 		TestUtilities.addLibraryContainer(JUnitCore.JUNIT4_CONTAINER_PATH,
 				project);
 		TestUtilities.addPyDevNature(project.getProject(), "src");
-
 	}
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testFindsContainer() {
+		IProject project = TestUtilities.getProject("TestProject2");
+		RootContainer rc = RootContainer.getRoot(project);
+		Assert.assertNotNull("Could not find the JUnit container",rc.getChild(JUnitCore.JUNIT4_CONTAINER_PATH.toPortableString()));
 	}
 
 	@AfterClass

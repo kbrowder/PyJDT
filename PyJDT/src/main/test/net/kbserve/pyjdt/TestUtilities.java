@@ -177,5 +177,8 @@ public class TestUtilities {
 			System.out.println("Deleted project named: " + project.getName());
 		}
 	}
+	public static IProject getProject(String name) {
+		return projects.get(name);
+	}
 
 }
