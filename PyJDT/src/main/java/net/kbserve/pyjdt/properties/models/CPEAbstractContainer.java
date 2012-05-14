@@ -50,7 +50,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	 * @param classpathEntry
 	 *            the classpath entry
 	 * @return the string
-	 * @deprecated Use CPEAbstractContainer.makeStringPath(String)
+	 * @deprecated Use CPEAbstractContainer.makeStringPath(IPath)
 	 */
 	@Deprecated
 	public static String makeStringPath(IClasspathEntry classpathEntry) {
@@ -324,7 +324,7 @@ public abstract class CPEAbstractContainer implements ICPEType {
 	public synchronized ICPEType updateChild(IClasspathEntry child,
 			IProject project) {
 
-		String stringPath = makeStringPath(child);
+		String stringPath = makeStringPath(child.getPath());
 		ICPEType icp = getChild(stringPath);
 		if (icp == null) {
 			switch (child.getEntryKind()) {
