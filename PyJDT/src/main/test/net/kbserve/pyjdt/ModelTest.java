@@ -1,5 +1,6 @@
 package net.kbserve.pyjdt;
 
+import net.kbserve.pyjdt.properties.models.ICPEType;
 import net.kbserve.pyjdt.properties.models.RootContainer;
 
 import org.eclipse.core.resources.IProject;
@@ -32,6 +33,15 @@ public class ModelTest {
 		IProject project = TestUtilities.getProject("TestProject2");
 		RootContainer rc = RootContainer.getRoot(project);
 		Assert.assertNotNull("Could not find the JUnit container",rc.getChild(JUnitCore.JUNIT4_CONTAINER_PATH.toPortableString()));
+	}
+	
+	@Test
+	public void testFindsJarInContainer() {
+		IProject project = TestUtilities.getProject("TestProject2");
+		RootContainer rc = RootContainer.getRoot(project);
+		ICPEType junitContainer = rc.getChild(JUnitCore.JUNIT4_CONTAINER_PATH.toPortableString());
+		Assert.assertTrue("The container contains no classpaths !?!", junitContainer.getChildren().size()>0);
+		
 	}
 
 	@AfterClass
