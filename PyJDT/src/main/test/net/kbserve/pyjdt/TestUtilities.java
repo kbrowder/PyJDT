@@ -73,11 +73,6 @@ public class TestUtilities {
 	public static void addLibraryContainer(IPath container, IJavaProject project)
 			throws JavaModelException {
 		IClasspathEntry containerEntry = JavaCore.newContainerEntry(container);
-		/*
-		 * IClasspathContainer classpathContainer = JavaCore.getClasspathContainer( container, project);
-		 * JavaCore.setClasspathContainer(container, new IJavaProject[] { project }, new IClasspathContainer[] {
-		 * classpathContainer }, null);
-		 */
 		addToClasspath(project, containerEntry);
 	}
 
