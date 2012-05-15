@@ -1,7 +1,8 @@
 =Overview=
 This plugin connects classpaths listed in Eclipse's Java Development Tools (JDT) Build Path to PyDev paths.  
 That is to say that things listed as Source, Libraries (no variable support yet though), and Projects will be placed into the PYTHONPATH before
-your run code.  This is particularly useful when using Jython with Java libraries (should even work with m2e)
+your run code.  This is particularly useful when using Jython with Java libraries like JUnit as configured through Eclipse without having to do explicit pathing, 
+it should even work with m2e.
 
 It currently provides a user interface such that users may select which paths they'd like.
 It's automatically enabled on projects with both PyDev and JDT natures.
