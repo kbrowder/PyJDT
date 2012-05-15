@@ -75,6 +75,11 @@ public class TestUtilities {
 		IClasspathEntry containerEntry = JavaCore.newContainerEntry(container);
 		addToClasspath(project, containerEntry);
 	}
+	
+	public static void addProject(IJavaProject project, IPath dependency) throws JavaModelException {
+		IClasspathEntry classpathEntry = JavaCore.newProjectEntry(dependency);
+		addToClasspath(project, classpathEntry);
+	}
 
 	public static void addPyDevNature(IProject project, String sourceDir)
 			throws CoreException {
@@ -127,12 +132,7 @@ public class TestUtilities {
 					pyPath += '|';
 				}
 				pyPath += localString;
-				System.out.println("New PyDev path for project "
-						+ project.getName() + " is '" + pyPath + "'");
 				pythonPathNature.setProjectSourcePath(pyPath);
-			} else {
-				System.out.println("The PyDev path already contains "
-						+ localString + " for project " + project.getName());
 			}
 		}
 
@@ -144,7 +144,6 @@ public class TestUtilities {
 
 		boolean duplicated = false;
 		for (IClasspathEntry ce : origionalEntries) {
-			System.out.println("ice:" + ce.getPath());
 			if (ce.getPath().equals(newEntry)) {
 				duplicated = true;
 				break;
@@ -157,7 +156,7 @@ public class TestUtilities {
 			project.setRawClasspath(newEntries, null);
 		}
 		for (IClasspathEntry ice : project.getRawClasspath()) {
-			if (ice.equals(newEntry)) {
+			if (ice.getPath().equals(newEntry.getPath())) {
 				return;
 			}
 		}
