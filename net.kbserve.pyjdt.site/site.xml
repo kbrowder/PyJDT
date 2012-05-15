@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <description name="Update Site for PyJDT" url="https://github.com/Kbrowder/PyJDT">
+      Update site for PyJDT a connector between JDT and PyDev.
+   </description>
+   <feature url="features/net.kbserve.pyjdt.feature_1.0.0.qualifier.jar" id="net.kbserve.pyjdt.feature" version="1.0.0.qualifier"/>
+</site>

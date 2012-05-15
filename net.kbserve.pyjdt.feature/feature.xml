@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="net.kbserve.pyjdt.feature"
+      label="PyJDT"
+      version="1.0.0.qualifier">
+
+   <description url="https://github.com/Kbrowder/PyJDT">
+      This plugin connects classpaths listed in Eclipse&apos;s Java Development Tools (JDT) Build Path to PyDev paths. That is to say that things listed as Source, Libraries (no variable support yet though), and Projects will be placed into the PYTHONPATH before your run code. This is particularly useful when using Jython with Java libraries like JUnit as configured through Eclipse without having to do explicit pathing, it should even work with m2e.
+
+It currently provides a user interface such that users may select which paths they&apos;d like. It&apos;s automatically enabled on projects with both PyDev and JDT natures.
+   </description>
+
+   <copyright>
+      Copyright 2012 - Kevin Browder
+   </copyright>
+
+   <license url="http://www.gnu.org/licenses">
+      This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see http://www.gnu.org/licenses.
+   </license>
+
+   <plugin
+         id="net.kbserve.pyjdt"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

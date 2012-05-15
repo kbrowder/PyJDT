@@ -11,6 +11,7 @@ We use the "[http://sourceforge.net/tracker/index.php?func=detail&aid=1988084&gr
 to modify the Python Paths in addition to inspecting IClasspathEntries in the project.
 
 =Known Issues=
+
 * No way of seeing the generated path.
 * No support for CPE_VARIABLE entries
 * Limited testing
@@ -18,6 +19,7 @@ to modify the Python Paths in addition to inspecting IClasspathEntries in the pr
 * No good way of running Python/Jython inside the JDT output directory.
 
 =License=
+
 <pre>
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
