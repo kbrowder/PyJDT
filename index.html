@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Pyjdt by Kbrowder</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Pyjdt</h1>
+        <h2>PyDev to JDT integration plugin</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/Kbrowder/PyJDT/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/Kbrowder/PyJDT/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/Kbrowder/PyJDT" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <p>=Overview=
+This plugin connects classpaths listed in Eclipse's Java Development Tools (JDT) Build Path to PyDev paths.<br>
+That is to say that things listed as Source, Libraries (no variable support yet though), and Projects will be placed into the PYTHONPATH before
+your run code.  This is particularly useful when using Jython with Java libraries like JUnit as configured through Eclipse without having to do explicit pathing, 
+it should even work with m2e.</p>
+
+<p>It currently provides a user interface such that users may select which paths they'd like.
+It's automatically enabled on projects with both PyDev and JDT natures.</p>
+
+<p>We use the "[<a href="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1988084&amp;group_id=85796&amp;atid=577329">http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1988084&amp;group_id=85796&amp;atid=577329</a> New pythonpath contribution extension point]" 
+to modify the Python Paths in addition to inspecting IClasspathEntries in the project.</p>
+
+<p>=Known Issues=</p>
+
+<ul>
+<li>No way of seeing the generated path.</li>
+<li>No support for CPE_VARIABLE entries</li>
+<li>Limited testing
+** very few unittests</li>
+<li>No good way of running Python/Jython inside the JDT output directory.</li>
+</ul><p>=License=</p>
+
+<pre>
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see .
+</pre>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
